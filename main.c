@@ -1,12 +1,8 @@
-#include <stdio.h>
-#include "validacoes.c"
+#include "mylib.h"
 
-int main (void){
-    int bool = 0;
-    char palavra1[4] = "nao", palavra2[4] = "nao";
-
-    bool = val_resposta( "Continuar?" );
-    printf( "bool = %d\n", bool );
+int main ( void ){
+    imp_menu();
+    get_menu( 5 );
 
     return 0;
 }
