@@ -1,6 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <regex.h>
 #include "mylib.h"
+
+#define NUMBERS "[0-9]"
+
+typedef struct client {
+    char** nome;
+    char** cpf;
+    char** datNasc;
+} Cliente;
 
 void imp_menu( void ){
     system("clear");
@@ -9,7 +19,7 @@ void imp_menu( void ){
     printf("2 - Cadastrar automóvel\n");
     printf("3 - Consultar automóveis disponíveis\n");
     printf("4 - Efetuar aluguel\n");
-    printf("5 - Sobre")
+    printf("5 - Sobre\n");
 }
 
 void imp_sobre( void ){
@@ -17,6 +27,7 @@ void imp_sobre( void ){
 }
 
 void get_menu( int n ){
+    system("clear");
     switch (n)
     {
     case 1:
@@ -43,4 +54,40 @@ void get_menu( int n ){
         printf("Foi impossível abrir um menu.\n");
         break;
     }
+}
+
+Cliente* cria_cliente( void ){
+    Cliente* novo_cliente = ( Cliente* ) malloc ( sizeof( Cliente ) );
+
+    novo_cliente->nome = ( char** ) malloc ( sizeof( char* ) );
+    novo_cliente->cpf = ( char** ) malloc ( sizeof( char* ) );
+    novo_cliente->datNasc = ( char** ) malloc ( sizeof( char* ) );
+
+    if( novo_cliente == NULL ){
+        printf("Memória insuficiente. Encerrando o programa...");
+        exit(1);
+    }
+
+    return novo_cliente;
+}
+
+void at_nome( Cliente* pessoa ){
+    char nome[128];
+    char* resultado;
+    
+    scanf(" %127[^\n0-9]", nome);
+
+    resultado = ( char* ) malloc ( strlen( nome ) * sizeof( char )+1 );
+
+    strcpy( resultado, nome );
+
+    *pessoa->nome = resultado;
+}
+
+void most_nomeCliente( Cliente* pessoa ){
+    printf("\nNome do cliente: %s\n", *pessoa->nome);
+}
+
+void libera_cliente( Cliente* pessoa ){
+    free( pessoa->nome );
 }
