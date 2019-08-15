@@ -26,12 +26,20 @@ void imp_sobre( void ){
     printf("\n\nPrograma desenvolvido por Anderson Carvalho\n\n_ _ _ _ _ Contatos _ _ _ _ _\n\nEmail: andersonfelipe01@live.com\nGithub: https://github.com/OakAnderson\n");
 }
 
+void cad_cliente( void ) {
+    Cliente* novo;
+    printf("Digite o nome do cliente: ");
+    at_nome( novo );
+
+    most_nomeCliente( novo );
+}
+
 void get_menu( int n ){
     system("clear");
     switch (n)
     {
     case 1:
-        printf("EM CONSTRUÇÃO\n");
+        cad_cliente();
         break;
     
     case 2:

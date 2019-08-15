@@ -36,3 +36,8 @@ void most_nomeCliente( Cliente* pessoa );
 ** Operação que libera o espaço armazenado por um cliente
 */
 void libera_cliente( Cliente* pessoa );
+
+/* Função cadastra cliente
+** Operação que inicia o cadastro do cliente
+*/
+void cad_cliente( void );
