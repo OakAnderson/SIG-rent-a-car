@@ -1,14 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "mylib.h"
+#include "validacoes.h"
+
 
 int main ( void ){
-    int escolha;
     
-    imp_menu();
-    printf("Selecione: ");
-    scanf(" %d", &escolha);
-    get_menu( escolha );
+    inicia_programa();
 
     return 0;
 }
