@@ -33,3 +33,15 @@ int val_num( char* numero );
 ** para datas
 */
 int val_data( char* data );
+
+
+/* Função valida nome
+** Operação que verifica se a entrada do usuário é um nome próprio
+*/
+int val_nome( char* nome );
+
+
+/* FUnção valida inteiro
+** Operação que verifica se o usuário digitou um número
+*/
+int val_inteiro( char* entrada );

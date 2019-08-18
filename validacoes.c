@@ -12,6 +12,8 @@
 
 #define REGEX_NUMERO "^\\(?([0-9]{2})\\)?([0-9]{4,5})[-.]?([0-9]{4})$"
 
+#define REGEX_NOME "^[A-Z\\. ]+$"
+
 
 int val_regex( char* expReg, char* frase ){
     regex_t expressao;
@@ -96,4 +98,24 @@ int val_num( char* numero ){
 
 int val_data( char* data ){
     return val_regex( REGEX_DATA, data );
+}
+
+
+int val_nome( char* nome ){
+    return val_regex( REGEX_NOME, nome );
+}
+
+
+int val_inteiro( char* entrada ){
+    for( int i = 0; entrada[i] != '\0'; i++){
+        if( entrada[i] >= '0' && entrada[i] <= '9' && entrada[i] != '\0' ){
+            continue;
+        }
+
+        else{
+            return 0;
+        }
+    }
+
+    return 1;
 }
