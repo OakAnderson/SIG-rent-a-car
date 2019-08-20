@@ -59,3 +59,8 @@ int val_inteiro( char* entrada );
 ** Retorna 1 se foi um dos dois
 */
 int val_SN( char* entrada );
+
+/* Função valida idade
+** Verifica se o usuário tem a data mínima para cadastro
+*/
+int val_idade( char* data );

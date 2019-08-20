@@ -35,18 +35,23 @@ void clnt_ins_cpf( Cliente* pessoa ){
         resultado = entr_str( "Insira o CPF do cliente: " );
     }
 
+    resultado = form_cpf( resultado );
+
     strcpy( pessoa->cpf, resultado );
 }
 
 
 void clnt_ins_datNasc( Cliente* pessoa ){
     char* resultado;
+    int a;
     
     resultado = entr_str( "Insira a data de nascimento do cliente: " );
     while( !( val_data( resultado ) ) ){
         printf("Data inserida é inválida.\n");
         resultado = entr_str( "Insira a data de nascimento do cliente: " );
     }
+
+    resultado = form_data( resultado );
 
     strcpy( pessoa->datNasc, resultado );
 }
@@ -91,6 +96,10 @@ void clnt_cad( void ) {
     clnt_ins_nome( novo );
     clnt_ins_cpf( novo );
     clnt_ins_datNasc( novo );
+
+    if( !( val_idade(novo->datNasc) ) ){
+        clnt_ins_datNasc( novo );
+    }
 
     clnt_mostra( novo );
 

@@ -54,3 +54,33 @@ void get_menu_cliente( int n );
 ** Operação que dá início ao programa, começando pela tela principal
 */
 void inicia_programa( void );
+
+
+/* Função formata CPF
+** Coloca os pontos e o hífen na posição correta
+*/
+char* form_cpf( char* entrada );
+
+
+/* Função formata data
+** Coloca as barras nas posições corretas
+*/
+char* form_data(  char* entrada);
+
+
+/* Função ano atual
+** Retorna o ano em que o usuário está
+*/
+int ano_atual( void );
+
+
+/* Função mes atual
+** Retorna o mes em que o usuário está
+*/
+int mes_atual( void );
+
+
+/* Função dia atual
+** Retorna o dia em que o usuário está
+*/
+int dia_atual( void );

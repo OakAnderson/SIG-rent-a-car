@@ -2,17 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "validacoes.h"
+#include "mylib.h"
 
 #define REGEX_EMAIL "^[A-Z0-9!#$%&'*+/=?`{|}~^.-]+@[A-Z0-9.-]+$" 
 // Expressão REGEX_EMAIL baseada no livro "Expressões regulares Cookbook" de Jan Goyvaerts
 
-#define REGEX_DATA "^([0-9]{1,2})/?([0-9]{1,2})/?([0-9]{4})$"
+#define REGEX_DATA "^(3[0-1]|[12][0-9]|0[1-9])/?(0[1-9]|1[0-2])/?([0-9]{2})?([0-9]{2})$"
+// Expressão REGEX_DATA baseada no livro "Expressões regulares cookbook" de Jan Goyvaerts
 
 #define REGEX_CPF "^([0-9]{3})\\.?([0-9]{3})\\.?([0-9]{3})-?([0-9]{2})$"
 
 #define REGEX_NUMERO "^\\(?([0-9]{2})\\)?([0-9]{4,5})[-.]?([0-9]{4})$"
 
-#define REGEX_NOME "^[A-Z\\. ]+$"
+#define REGEX_NOME "^[A-Z\\. ]{3,50}+$"
 
 #define REGEX_SN "^(s(im)?|n(ao)?)$"
 
@@ -35,6 +37,20 @@ int val_regex( char* expReg, char* frase ){
 
     return 0;
 }
+
+
+int bissesto( int ano ){
+    if( ano % 400 == 0 ){
+        return 1;
+    }
+
+    else if( (ano % 4 == 0) && (ano % 100 != 0) ){
+        return 1;
+    }
+
+    return 0;
+}
+
 
 
 int val_email( char* email ){
@@ -104,7 +120,61 @@ int val_num( char* numero ){
 
 
 int val_data( char* data ){
-    return val_regex( REGEX_DATA, data );
+    int ano = 0, mes = 0, dia = 0;
+    char* resultado = form_data( data );
+
+    if( val_regex( REGEX_DATA, data ) ){
+        ano = (resultado[6] - '0') * 1000 + (resultado[7] - '0') * 100 + (resultado[8] - '0') * 10 + (resultado[9] - '0');
+        mes = (resultado[3] - '0') * 10 + (resultado[4] - '0');
+        dia = (resultado[0] - '0') * 10 + (resultado[1] - '0');
+
+        if( mes == 2 ){
+            if( bissesto( ano ) ){
+                return dia <= 29;
+            }
+            else{
+                return dia <= 28;
+            }
+        }
+
+        else if( mes == 4 || mes == 6 || mes == 9 || mes == 11 ){
+            return dia <= 30;
+        }
+
+        return 1;
+    }
+
+    return 0;
+}
+
+
+int val_idade( char* data ){
+    int ano = (data[6] - '0')*1000 + (data[7] - '0')*100 + (data[8] - '0')*10 + (data[9] - '0');
+    int mes = (data[3] - '0')*10 + (data[4] - '0');
+    int dia = (data[0] - '0')*10 + (data[1] - '0');
+
+    if( ano > ano_atual() ){
+        printf("Ano inválido\n");
+        return 0;
+    }
+
+    else if( ano > ano_atual()-18 ){
+        printf("É preciso ser maior de 18 para se cadastrar\n");
+        return 0;
+    }
+
+    else if( ano == ano_atual()-18 ){
+        if( mes > mes_atual() ){
+            printf("É preciso ser maior de 18 para se cadastrar\n");
+            return 0;
+        }
+        else if( mes == mes_atual() && dia > dia_atual() ){
+            printf("É preciso ser maior de 18 para se cadastrar\n");
+            return 0;
+        }
+    }
+    
+    return 1;
 }
 
 
