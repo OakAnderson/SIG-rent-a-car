@@ -14,6 +14,8 @@
 
 #define REGEX_NOME "^[A-Z\\. ]+$"
 
+#define REGEX_SN "^(s(im)?|n(ao)?)$"
+
 
 int val_regex( char* expReg, char* frase ){
     regex_t expressao;
@@ -88,6 +90,11 @@ int val_cpf( char* cpf ){
     }
     
     return 1;
+}
+
+
+int val_SN( char* entrada ){
+    return val_regex( REGEX_SN, entrada );
 }
 
 
