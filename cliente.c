@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "cliente.h"
 #include "mylib.h"
 #include "validacoes.h"
 
 
 typedef struct client {
-    char** nome;
-    char** cpf;
-    char** datNasc;
+    char nome[52];
+    char cpf[15];
+    char datNasc[11];
 } Cliente;
 
 
@@ -21,7 +22,7 @@ void clnt_ins_nome( Cliente* pessoa ){
         resultado = entr_str( "Insira o nome do cliente: " );
     }
 
-    *pessoa->nome = resultado;
+    strcpy( pessoa->nome, resultado );
 }
 
 
@@ -34,7 +35,7 @@ void clnt_ins_cpf( Cliente* pessoa ){
         resultado = entr_str( "Insira o CPF do cliente: " );
     }
 
-    *pessoa->cpf = resultado;
+    strcpy( pessoa->cpf, resultado );
 }
 
 
@@ -47,41 +48,32 @@ void clnt_ins_datNasc( Cliente* pessoa ){
         resultado = entr_str( "Insira a data de nascimento do cliente: " );
     }
 
-    *pessoa->datNasc = resultado;
+    strcpy( pessoa->datNasc, resultado );
 }
 
 
 void clnt_mostra_nome( Cliente* pessoa ){
-    printf("\nNome do cliente: %s\n", *pessoa->nome);
+    printf("\nNome do cliente: %s\n", pessoa->nome);
 }
 
 
 void clnt_mostra_cpf( Cliente* pessoa ){
-    printf("\nCPF do cliente: %s\n", *pessoa->cpf);
+    printf("\nCPF do cliente: %s\n", pessoa->cpf);
 }
 
 
 void clnt_mostra_datNasc( Cliente* pessoa ){
-    printf("\nData de Nascimento do cliente: %s\n", *pessoa->datNasc);
+    printf("\nData de Nascimento do cliente: %s\n", pessoa->datNasc);
 }
 
 
 void clnt_libera( Cliente* pessoa ){
-    free( pessoa->nome );
+    free( pessoa );
 }
 
 
 Cliente* clnt_cria( void ){
     Cliente* novo_cliente = ( Cliente* ) malloc ( sizeof( Cliente ) );
-
-    novo_cliente->nome = ( char** ) malloc ( sizeof( char* ) );
-    novo_cliente->cpf = ( char** ) malloc ( sizeof( char* ) );
-    novo_cliente->datNasc = ( char** ) malloc ( sizeof( char* ) );
-
-    if( novo_cliente == NULL ){
-        printf("Memória insuficiente. Encerrando o programa...");
-        exit(1);
-    }
 
     return novo_cliente;
 }

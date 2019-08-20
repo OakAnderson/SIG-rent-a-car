@@ -23,21 +23,44 @@ char* entr_str( char* frase ){
 }
 
 
+int get_resposta( char* opcao ){
+
+    if( opcao[0] == 's' ){
+        return 1;
+    }
+
+    return 0; 
+}
+
+
+void voltar( void ){
+    char* opcao;
+
+    opcao = entr_str("Voltar?(s/n) ");
+    while( !( val_SN( opcao ) ) ){
+        printf("Aceito apenas: s|n|sim|nao\n");
+        opcao = entr_str("Voltar?(s/n) ");
+    }
+
+    if( !(get_resposta( opcao )) ){
+        voltar();
+    }
+}
+
 
 int menu_escolha( int n ){
     char* entrada;
 
     entrada = entr_str("Opção n°: ");
-    if( !( val_inteiro(entrada) ) ){
-        do{
-            printf("Opção inválida.");
-            entrada = entr_str("Opção n°: ");
-        } while( !(val_inteiro(entrada)) );
+
+    while( !( val_inteiro(entrada) ) ){
+        printf("Opção inválida.\n");
+        entrada = entr_str("Opção n°: ");
     }
 
     if( atoi(entrada) < 0 || atoi(entrada) > n ){
         do{
-            printf("Opção inválida.");
+            printf("Opção inválida.\n");
             entrada = entr_str("Opção n°: ");
         } while( atoi(entrada) < 0 || atoi(entrada) > n );
     }
@@ -81,6 +104,9 @@ void get_menu_p( int n ){
 
     case 0:
         imp_sobre();
+        voltar();
+        imp_menu_p();
+        get_menu_p( menu_escolha( 4 ) );
         break;
 
     default:
@@ -117,8 +143,8 @@ void get_menu_cliente( int n ){
         break;
 
     case 0:
-        imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 4 ) );
+        imp_menu_p();
+        get_menu_p( menu_escolha( 4 ) );
 
     default:
         printf("Não foi possível abrir o menu\n");
