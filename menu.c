@@ -163,5 +163,5 @@ void imp_sobre( void ){
 
 void inicia_programa( void ){
     imp_menu_p();
-    get_menu_p( menu_escolha( 4 ) );
+    get_menu_p( menu_escolha( 5 ) );
 }
