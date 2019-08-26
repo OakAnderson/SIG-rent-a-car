@@ -16,6 +16,38 @@ int val_regex( char* expReg, char* frase );
 int val_email( char* email );
 
 
+/* Função valida placa
+** Operação que retorna o resultado da função val_regex combinando
+** para placas
+** Retorna 1 se for válido
+*/
+int val_placa( char* );
+
+
+/* Função valida ano
+** Operação que retorna o resultado da função val_regex combinando
+** para anos
+** Retorna 1 se for válido
+*/
+int val_ano( char* );
+
+
+/* Função valida marca
+** Operação que retorna o resultado da função val_regex combinando
+** para marcas
+** Retorna 1 se for válido
+*/
+int val_marca( char* );
+
+
+/* Função valida renavam
+** Operação que retorna o resultado da função val_regex combinando
+** para marcas
+** Retorna 1 se for válido
+*/
+int val_renavam( char* );
+
+
 /* Função valida cpf
 ** Operação que retorna o resultado da função val_regex combinando
 ** para CPFs

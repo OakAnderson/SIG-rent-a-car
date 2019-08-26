@@ -4,8 +4,8 @@
 #include "validacoes.h"
 #include "mylib.h"
 
-#define REGEX_EMAIL "^[A-Z0-9!#$%&'*+/=?`{|}~^.-]+@[A-Z0-9.-]+$" 
-// Expressão REGEX_EMAIL baseada no livro "Expressões regulares Cookbook" de Jan Goyvaerts
+#define REGEX_EMAIL "^[0-9a-zA-Z]([-\\.a-z0-9_]*[0-9a-zA-Z_\\+])*@([0-9a-zA-Z][-a-z0-9_]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9}$" 
+// Expressão REGEX_EMAIL baseada no livro "Regular Expression Pocket Reference: Regular Expressions for Perl, Ruby, PHP, Python, C, Java and .NET" de Tony Stubblebine
 
 #define REGEX_DATA "^(3[0-1]|[12][0-9]|0[1-9])/?(0[1-9]|1[0-2])/?([0-9]{2})?([0-9]{2})$"
 // Expressão REGEX_DATA baseada no livro "Expressões regulares cookbook" de Jan Goyvaerts
@@ -18,6 +18,13 @@
 
 #define REGEX_SN "^(s(im)?|n(ao)?)$"
 
+#define REGEX_PLACA "^[a-z]{3}\\-?[0-9]{4}$"
+
+#define REGEX_MARCA "^[a-z ]+$"
+
+#define REGEX_ANO "^[0-9]{4}$"
+
+#define REGEX_RENAVAM "^[0-9]{11}$"
 
 int val_regex( char* expReg, char* frase ){
     regex_t expressao;
@@ -33,6 +40,36 @@ int val_regex( char* expReg, char* frase ){
 
     if( regexec( &expressao, frase, 1, combinacoes, 0 ) == 0 ){
         return 1;
+    }
+
+    return 0;
+}
+
+
+int val_cpf_r( char* cpf ){
+    if( cpf[1] != '\0' ){
+
+        if( cpf[1] != '.' && cpf[1] != '-' ){
+
+            if( cpf[0] == cpf[1]  ){
+                return val_cpf_r( &cpf[1] );
+            }
+
+            else{
+                return 1;
+            }
+        }
+
+        else{
+
+            if( cpf[0] == cpf[2] ){
+                return val_cpf_r( &cpf[2] );
+            }
+
+            else{
+                return 1;
+            }
+        }
     }
 
     return 0;
@@ -58,12 +95,59 @@ int val_email( char* email ){
 }
 
 
+int val_placa( char* placa ){
+    return val_regex( REGEX_PLACA, placa );
+}
+
+
+int val_marca( char* marca ){
+    return val_regex( REGEX_MARCA, marca );
+}
+
+
+int val_ano( char* ano ){
+    return val_regex( REGEX_ANO, ano );
+}
+
+
+int val_renavam( char* renavam ){
+    int validacao = 0;
+
+    if( val_regex( REGEX_RENAVAM, renavam ) ){
+        for( int i = 9, j = 0; i >= 0; i--, j++ ){
+            if( j+2 <= 9 ){
+                validacao += (renavam[i] - '0')*(j+2);
+            }
+            else{
+                validacao += (renavam[i] - '0')*(j-6);
+            }
+        }
+        
+        if( (validacao*10)%11 == (renavam[10] - '0') ){
+            return 1;
+        }
+
+        else if( (validacao*10)%11 == 10 && (renavam[10] - '0') == 0 ){
+            return 1;
+        }
+
+        return 0;
+    }
+
+    return 0;
+}
+
+
 int val_cpf( char* cpf ){
     int cont=0, digito1 = 0, digito2 = 0;
     char d1, d2;
 
     if ( val_regex( REGEX_CPF, cpf ) ){
         cont = 10;
+
+        if (!(val_cpf_r(cpf)))
+            return 0;
+
         for( int i = 0; cpf[i] != '\0'; i++ ){
             if( ( cpf[i] != '.' ) && cont >= 2 ){
                 digito1 += (cpf[i] - '0') * cont;
