@@ -25,8 +25,15 @@ gcc -o exe main.c cliente.o menu.o mylib.o validacoes.o veiculo.o
 
 
 int main ( void ){
-    
-    inicia_programa();
+    char* a;
 
+    printf("\n_ _ _ _ _ LOGIN _ _ _ _ _\n\n");
+
+    a = entr_str("Usuário: ");
+    a = entr_str("Senha: ");
+    
+    free(a);
+
+    inicia_programa();
     return 0;
 }
