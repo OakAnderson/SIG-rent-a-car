@@ -1,10 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include "menu.h"
-#include "mylib.h"
-#include "cliente.h"
-#include "veiculo.h"
+#ifndef BIBLIOTECAS
+    #define BIBLIOTECAS
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include <regex.h>
+    #include <time.h>
+    #include <unistd.h>
+    #include "cliente.h"
+    #include "mylib.h"
+    #include "validacoes.h"
+    #include "menu.h"
+    #include "veiculo.h"
+#endif
 
 
 void get_menu_p( int n ){
@@ -73,6 +80,8 @@ void get_menu_cliente( int n ){
     switch (n)
     {
     case 1:
+        system("clear");
+        printf("\n\n_ _ _ _ _ CADASTRO DE CLIENTE _ _ _ _ _\n\n");
         clnt_cad();
         voltar();
         imp_menu_p();
@@ -111,6 +120,8 @@ void get_menu_veiculo( int n ){
     switch (n)
     {
     case 1:
+        system("clear");
+        printf("\n\n_ _ _ _ _ CADASTRO DE VEÍCULO _ _ _ _ _\n\n");
         veic_cad();
         voltar();
         imp_menu_p();

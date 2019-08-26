@@ -2,10 +2,6 @@
 
 typedef struct client Cliente;
 
-/* Função aloca cliente
-** Operação que reserva um espaço na memória para um cliente
-*/
-Cliente* cria_cliente( void );
 
 /* Função obtém nome
 ** Operação que obtém o nome do cliente
