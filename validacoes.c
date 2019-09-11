@@ -6,6 +6,7 @@
     #include <regex.h>
     #include <time.h>
     #include <unistd.h>
+    #include <ctype.h>
     #include "cliente.h"
     #include "mylib.h"
     #include "validacoes.h"
@@ -273,6 +274,18 @@ int val_idade( char* data ){
 
 int val_nome( char* nome ){
     return val_regex( REGEX_NOME, nome );
+}
+
+
+int cmp_nomes(char* nome1, char* nome2){
+
+    for( int i = 0; nome1[i] != '\0'; i++ ){
+        if( tolower(nome1[i]) != tolower(nome2[i]) ){
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 

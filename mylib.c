@@ -6,6 +6,7 @@
     #include <regex.h>
     #include <time.h>
     #include <unistd.h>
+    #include <ctype.h>
     #include "cliente.h"
     #include "mylib.h"
     #include "validacoes.h"
@@ -26,6 +27,13 @@ char* entr_str( char* frase ){
     strcpy(resultado, entrada);
 
     return resultado;
+}
+
+
+void limpa_linha( int num ){
+    for( int i = 0; i < num; i++){
+        printf("\033[A\33[2K\r");
+    }
 }
 
 
@@ -119,7 +127,7 @@ char* form_data( char* entrada ){
 
 int get_resposta( char* opcao ){
 
-    if( opcao[0] == 's' ){
+    if( opcao[0] == 's' || opcao[0] == 'S' ){
         return 1;
     }
 
@@ -127,17 +135,22 @@ int get_resposta( char* opcao ){
 }
 
 
-void voltar( void ){
+void voltar( int linhas ){
     char* opcao;
+    int cont = 0, erro = 0;
 
     opcao = entr_str("Voltar?(s/n) ");
+
     while( !( val_SN( opcao ) ) ){
+        erro = 2;
+        limpa_linha(linhas+1);
         printf("Aceito apenas: s|n|sim|nao\n");
-        opcao = entr_str("Voltar?(s/n) ");
+        voltar(linhas+1);
     }
 
     if( !(get_resposta( opcao )) ){
-        voltar();
+        limpa_linha(1);
+        voltar(linhas);
     }
 }
 

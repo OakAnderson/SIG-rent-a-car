@@ -6,6 +6,7 @@
     #include <regex.h>
     #include <time.h>
     #include <unistd.h>
+    #include <ctype.h>
     #include "cliente.h"
     #include "mylib.h"
     #include "validacoes.h"
@@ -46,7 +47,7 @@ void get_menu_p( int n ){
 
     case 5:
         imp_sobre();
-        voltar();
+        voltar(0);
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
         break;
@@ -83,19 +84,24 @@ void get_menu_cliente( int n ){
         system("clear");
         printf("\n\n_ _ _ _ _ CADASTRO DE CLIENTE _ _ _ _ _\n\n");
         clnt_cad();
-        voltar();
+        voltar(0);
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
         break;
 
     case 2:
         system("clear");
+        clnt_re_dados();
+        imp_menu_cliente();
+        get_menu_cliente( menu_escolha( 2 ) );
+    /*
+        system("clear");
         printf("EM CONSTRUÇÃO.\n");
         sleep( 2 );
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
         break;
-
+*/
     case 0:
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
@@ -123,7 +129,7 @@ void get_menu_veiculo( int n ){
         system("clear");
         printf("\n\n_ _ _ _ _ CADASTRO DE VEÍCULO _ _ _ _ _\n\n");
         veic_cad();
-        voltar();
+        voltar(0);
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
 
@@ -134,7 +140,6 @@ void get_menu_veiculo( int n ){
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
         break;
-    
     case 0:
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
@@ -158,6 +163,14 @@ void imp_menu_veiculo( void ){
 
 void imp_sobre( void ){
     printf("\n\nPrograma desenvolvido por Anderson Carvalho\n\n_ _ _ _ _ Contatos _ _ _ _ _\n\nEmail: andersonfelipe01@live.com\nGithub: https://github.com/OakAnderson\n");
+}
+
+
+void imp_clnt_visualizarDados( void ){
+    printf("_ _ _ _ _ VISUALIZAR DADOS DE CLIENTE _ _ _ _ _\n\n");
+    printf("1 - Pesquisar por nome\n");
+    printf("2 - Pesquisar por CPF\n");
+    printf("0 - sair\n");
 }
 
 

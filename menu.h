@@ -30,12 +30,6 @@ void imp_menu_veiculo( void );
 void get_menu_veiculo( int );
 
 
-/* Função voltar
-** Operação que solicita ao cliente se ele deseja voltar
-*/
-void voltar( void );
-
-
 /* Função inicia programa
 ** Operação que dá início ao programa, começando pela tela principal
 */
@@ -52,3 +46,9 @@ void imp_menu_p( void );
 ** Operação que mostra a tela de sobre para o usuário
 */
 void imp_sobre( void );
+
+
+/* Função imprime cliente dados
+** Operação que mostra na tela as opções de recuperação de dados
+*/
+void imp_clnt_visualizarDados( void );

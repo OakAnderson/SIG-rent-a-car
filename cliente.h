@@ -3,6 +3,32 @@
 typedef struct client Cliente;
 
 
+/* Função salva
+** Operação que salva os dados de um cliente em arquivo
+*/
+int clnt_salva( Cliente* pessoa );
+
+
+/* Função recupera nome
+** Operação que recupera os dados de um cliente salvo em
+** arquivo, buscando pelo nome
+*/
+Cliente* clnt_recupera_nome( void );
+
+
+/* Função recupera cpf
+** Operação que recupera os dados de um cliente salvo em
+** arquivo, buscando pelo cpf
+*/
+Cliente* clnt_recupera_cpf( void );
+
+
+/* Função recupera dados
+** Operação que busca dados de um cliente a partir de um
+** paramêtro escolhido
+*/
+void clnt_re_dados( void );
+
 /* Função obtém nome
 ** Operação que obtém o nome do cliente
 */
@@ -26,15 +52,6 @@ void clnt_ins_datNasc( Cliente* pessoa );
 */
 void clnt_mostra_nome( Cliente* pessoa );
 
-/* Função libera cliente
-** Operação que libera o espaço armazenado por um cliente
-*/
-void clnt_libera( Cliente* pessoa );
-
-/* Função cadastra cliente
-** Operação que inicia o cadastro do cliente
-*/
-void clnt_cad( void );
 
 /* Função mostra cpf cliente
 ** Operação que mostra o CPF do cliente na tela
@@ -47,7 +64,23 @@ void clnt_mostra_cpf( Cliente* pessoa );
 */
 void clnt_mostra_datNasc( Cliente* pessoa );
 
+/* Função libera cliente
+** Operação que libera o espaço armazenado por um cliente
+*/
+void clnt_libera( Cliente* pessoa );
+
+/* Função cliente cria
+** Operação que aloca um espaço na memória para um cliente
+*/
+Cliente* clnt_cria( void );
+
 /* Função mostra
 ** Operação que mostra os dados do cliente na tela
 */
 void clnt_mostra( Cliente* pessoa );
+
+
+/* Função cadastra cliente
+** Operação que inicia o cadastro do cliente
+*/
+void clnt_cad( void );

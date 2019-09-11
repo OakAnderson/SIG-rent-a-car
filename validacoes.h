@@ -96,3 +96,8 @@ int val_SN( char* entrada );
 ** Verifica se o usuário tem a data mínima para cadastro
 */
 int val_idade( char* data );
+
+/* Função compara nomes
+** Verifica se os nomes inseridos são equivalentes
+*/
+int cmp_nomes( char*, char* );

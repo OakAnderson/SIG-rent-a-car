@@ -6,6 +6,7 @@
     #include <regex.h>
     #include <time.h>
     #include <unistd.h>
+    #include <ctype.h>
     #include "cliente.h"
     #include "mylib.h"
     #include "validacoes.h"

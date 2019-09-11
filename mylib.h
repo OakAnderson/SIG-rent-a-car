@@ -50,3 +50,9 @@ int mes_atual( void );
 ** Retorna o dia em que o usuário está
 */
 int dia_atual( void );
+
+
+/* Função voltar
+** Operação que solicita ao cliente se ele deseja voltar
+*/
+void voltar( int );
