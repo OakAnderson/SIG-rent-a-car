@@ -61,17 +61,12 @@ void clnt_deleta( void ){
 
         do {
             fread( pessoaR, sizeof(Cliente), 1, arquivo );
-            printf("%d\n", clnt_compara(pessoaR, pessoa));
-        } while(!clnt_compara(pessoaR, pessoa) && !feof(arquivo) );
+        } while(clnt_compara(pessoaR, pessoa) && !feof(arquivo) );
 
         pessoa->status = -1;
         fseek(arquivo, (-1)*sizeof(Cliente), SEEK_CUR);
         fwrite(pessoa, sizeof(Cliente), 1, arquivo);
         fclose(arquivo);
-        exit(0);
-    } else {
-        printf("Não entrou no if\n");
-        exit(1);
     }
 }
 
@@ -127,7 +122,7 @@ Cliente* clnt_recupera_nome( void ){
 
     fread( pessoa, sizeof(Cliente), 1, arquivo );
     while( !feof(arquivo) ){
-        if( cmp_nomes(nome, pessoa->nome) ){
+        if( cmp_nomes(nome, pessoa->nome) && !pessoa->status ){
             fclose(arquivo);
             return pessoa;
         }
@@ -135,7 +130,7 @@ Cliente* clnt_recupera_nome( void ){
     }
 
     fclose(arquivo);
-
+    clnt_libera( pessoa );
     return NULL;
 }
 
@@ -197,7 +192,7 @@ void clnt_mostra_todos( void ){
 
 void clnt_re_dados( void ){
     char* nome;
-    Cliente* pessoa = NULL;
+    Cliente* pessoa;
 
     imp_clnt_visualizarDados();
 
