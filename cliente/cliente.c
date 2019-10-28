@@ -5,24 +5,27 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "usuario.h"
+#include "../usuario/usuario.h"
 #include "cliente.h"
-#include "mylib.h"
-#include "validacoes.h"
-#include "menu.h"
-#include "veiculo.h"
+#include "../mylib.h"
+#include "../validacoes/validacoes.h"
+#include "../menu/menu.h"
+#include "../veiculo/veiculo.h"
 
 
 typedef struct client {
     char nome[52];
     char cpf[15];
     char datNasc[11];
+    short int status;
 } Cliente;
 
 
 int clnt_salva( Cliente* pessoa ){
     FILE *arquivo;
     int result;
+
+    pessoa->status = 0;
 
     arquivo = fopen( "Cliente.dat", "ab" );
 
@@ -38,6 +41,74 @@ int clnt_salva( Cliente* pessoa ){
     fclose(arquivo);
 
     return 1;
+}
+
+
+void clnt_deleta( void ){
+    FILE* arquivo;
+    Cliente *pessoa, *pessoaR;
+
+    pessoa = clnt_recupera_cpf();
+    pessoaR = clnt_cria();
+
+
+    if( clnt_existe(pessoa) ){
+        arquivo = fopen("Cliente.dat", "r+b");
+        if( arquivo == NULL ){
+            printf("Erro ao deletar o cliente\n");
+            exit(1);
+        }
+
+        do {
+            fread( pessoaR, sizeof(Cliente), 1, arquivo );
+            printf("%d\n", clnt_compara(pessoaR, pessoa));
+        } while(!clnt_compara(pessoaR, pessoa) && !feof(arquivo) );
+
+        pessoa->status = -1;
+        fseek(arquivo, (-1)*sizeof(Cliente), SEEK_CUR);
+        fwrite(pessoa, sizeof(Cliente), 1, arquivo);
+        fclose(arquivo);
+        exit(0);
+    } else {
+        printf("Não entrou no if\n");
+        exit(1);
+    }
+}
+
+
+int clnt_compara( Cliente* pessoa1, Cliente* pessoa2 ){
+    if( !strcmp(pessoa1->nome, pessoa2->nome) ){
+        return 0;
+    } else if ( !strcmp(pessoa1->cpf, pessoa2->cpf) ){
+        return 0;
+    } else if ( !strcmp(pessoa1->datNasc, pessoa2->datNasc) ){
+        return 0;
+    }
+
+    return 1;
+}
+
+
+int clnt_existe( Cliente* pessoaV ){
+    FILE* arquivo;
+    Cliente* pessoa = clnt_cria();
+
+    arquivo = fopen("Cliente.dat", "rb");
+
+    fread( pessoa, sizeof(Cliente), 1, arquivo );
+    while( !feof(arquivo) ){
+        if( clnt_compara(pessoaV, pessoa) ){
+            clnt_libera(pessoa);
+            fclose(arquivo);
+            return 1;
+        }
+        fread( pessoa, sizeof(Cliente), 1, arquivo );
+    }
+
+    clnt_libera(pessoa);
+    fclose(arquivo);
+
+    return 0;
 }
 
 
@@ -72,7 +143,7 @@ Cliente* clnt_recupera_nome( void ){
 Cliente* clnt_recupera_cpf( void ){
     char* cpf;
     FILE* arquivo;
-    Cliente* pessoa;
+    Cliente* pessoa = clnt_cria();
 
     cpf = entr_str("Digite o cpf do cliente: ");
     while( !val_cpf( cpf ) ){
@@ -86,7 +157,7 @@ Cliente* clnt_recupera_cpf( void ){
 
     fread( pessoa, sizeof(Cliente), 1, arquivo );
     while( !feof(arquivo) ){
-        if( strcmp(cpf, pessoa->cpf) == 0 ){
+        if( strcmp(cpf, pessoa->cpf) == 0 && !pessoa->status ){
             fclose(arquivo);
             return pessoa;
         }
@@ -104,13 +175,18 @@ void clnt_mostra_todos( void ){
     char* nome;
     FILE* arquivo;
     Cliente* pessoa;
+    int num = 1;
     
     arquivo = fopen("Cliente.dat", "rb");
 
     fread( pessoa, sizeof(Cliente), 1, arquivo );
     while( !feof(arquivo) ){
-        printf("%d --------------------\n");
-        clnt_mostra( pessoa );
+        if(!pessoa->status){
+            printf("%d --------------------\n", num);
+            clnt_mostra( pessoa );
+            printf("----------------------\n");
+            num++;
+        }
 
         fread( pessoa, sizeof(Cliente), 1, arquivo );
     }

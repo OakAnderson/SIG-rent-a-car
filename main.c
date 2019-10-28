@@ -5,12 +5,12 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "usuario.h"
-#include "cliente.h"
+#include "usuario/usuario.h"
+#include "cliente/cliente.h"
 #include "mylib.h"
-#include "validacoes.h"
-#include "menu.h"
-#include "veiculo.h"
+#include "validacoes/validacoes.h"
+#include "menu/menu.h"
+#include "veiculo/veiculo.h"
 
 
 int main ( void ){
@@ -19,11 +19,8 @@ int main ( void ){
     system("clear");
     printf("\n_ _ _ _ _ LOGIN _ _ _ _ _\n\n");
 
-    a = entr_str("Usuário: ");
-    a = entr_str("Senha: ");
-
-    free(a);
-
+    usr_login();
+    
     inicia_programa();
     return 0;
 }

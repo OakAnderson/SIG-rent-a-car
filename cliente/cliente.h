@@ -92,4 +92,23 @@ void clnt_cad( void );
 ** Operação que mostra na tela todos os clientes cadastrados
 */
 void clnt_mostra_todos( void );
+
+
+/* Função compara clientes
+** Operação que retorna 1 se as estruturas passadas forem iguais
+*/
+int clnt_compara( Cliente*, Cliente* );
+
+
+/* Função existe cliente
+** Operação que retorna 1 se o cliente já estiver cadastrado
+*/
+int clnt_existe( Cliente* );
+
+
+/* Função deleta cliente
+** Operação que deleta (altera o status) um cliente dos dados
+*/
+void clnt_deleta( void );
+
 #endif

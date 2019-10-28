@@ -5,12 +5,12 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "usuario.h"
-#include "cliente.h"
-#include "mylib.h"
-#include "validacoes.h"
+#include "../usuario/usuario.h"
+#include "../cliente/cliente.h"
+#include "../mylib.h"
+#include "../validacoes/validacoes.h"
 #include "menu.h"
-#include "veiculo.h"
+#include "../veiculo/veiculo.h"
 
 
 void get_menu_p( int n ){
@@ -19,7 +19,7 @@ void get_menu_p( int n ){
     {
     case 1:
         imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 3 ) );
+        get_menu_cliente( menu_escolha( 4 ) );
         break;
     
     case 2:
@@ -91,21 +91,19 @@ void get_menu_cliente( int n ){
         system("clear");
         clnt_re_dados();
         imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 2 ) );
-    /*
-        system("clear");
-        printf("EM CONSTRUÇÃO.\n");
-        sleep( 2 );
-        imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
-        break;
-    */
+        get_menu_cliente( menu_escolha( 4 ) );
     case 3:
         system("clear");
         clnt_mostra_todos();
         voltar(0);
         imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 2 ) );
+        get_menu_cliente( menu_escolha( 4 ) );
+    
+    case 4:
+        system("clear");
+        clnt_deleta();
+        imp_menu_cliente();
+        get_menu_cliente( menu_escolha( 4 ) );
     case 0:
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
@@ -123,6 +121,7 @@ void imp_menu_cliente( void ){
     printf("1 - Cadastrar cliente\n");
     printf("2 - Visualizar dados do cliente\n");
     printf("3 - Visualizar todos os clientes\n");
+    printf("4 - Deletar cliente\n");
     printf("0 - sair\n");
 }
 

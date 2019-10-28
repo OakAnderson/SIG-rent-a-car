@@ -5,12 +5,12 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "usuario.h"
-#include "cliente.h"
-#include "mylib.h"
+#include "../usuario/usuario.h"
+#include "../cliente/cliente.h"
+#include "../mylib.h"
 #include "validacoes.h"
-#include "menu.h"
-#include "veiculo.h"
+#include "../menu/menu.h"
+#include "../veiculo/veiculo.h"
 
 
 #define REGEX_EMAIL "^[0-9a-zA-Z]([-\\.a-z0-9_]*[0-9a-zA-Z_\\+])*@([0-9a-zA-Z][-a-z0-9_]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9}$" 
@@ -35,9 +35,9 @@
 
 #define REGEX_RENAVAM "^[0-9]{11}$"
 
-#define REGEX_USERNAME "^[a-z0-9]{6, 20}$"
+#define REGEX_USERNAME "^[a-z0-9]{6,20}$"
 
-#define REGEX_SENHA "^[\\x20-\\x7E]{6, 20}$"
+#define REGEX_SENHA "^[\\x20-\\x7E]{6,20}$"
 
 
 int val_regex( char* expReg, char* frase ){

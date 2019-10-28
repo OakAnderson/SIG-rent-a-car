@@ -5,11 +5,11 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "usuario.h"
-#include "cliente.h"
-#include "mylib.h"
-#include "validacoes.h"
-#include "menu.h"
+#include "../usuario/usuario.h"
+#include "../cliente/cliente.h"
+#include "../mylib.h"
+#include "../validacoes/validacoes.h"
+#include "../menu/menu.h"
 #include "veiculo.h"
 
 

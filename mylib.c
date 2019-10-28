@@ -5,12 +5,12 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "usuario.h"
-#include "cliente.h"
+#include "usuario/usuario.h"
+#include "cliente/cliente.h"
 #include "mylib.h"
-#include "validacoes.h"
-#include "menu.h"
-#include "veiculo.h"
+#include "validacoes/validacoes.h"
+#include "menu/menu.h"
+#include "veiculo/veiculo.h"
 
 
 char* entr_str( char* frase ){
@@ -123,6 +123,15 @@ char* form_data( char* entrada ){
 }
 
 
+// Função copiada de https://pt.stackoverflow.com/questions/9427/limpeza-do-buffer-do-teclado-após-scanf
+void flush_in() {
+    int ch;
+    do {
+        ch = fgetc(stdin);
+    } while (ch != EOF && ch != '\n');
+}
+
+
 int get_resposta( char* opcao ){
 
     if( opcao[0] == 's' || opcao[0] == 'S' ){
@@ -137,19 +146,9 @@ void voltar( int linhas ){
     char* opcao;
     int cont = 0, erro = 0;
 
-    opcao = entr_str("Voltar?(s/n) ");
-
-    while( !( val_SN( opcao ) ) ){
-        erro = 2;
-        limpa_linha(linhas+1);
-        printf("Aceito apenas: s|n|sim|nao\n");
-        voltar(linhas+1);
-    }
-
-    if( !(get_resposta( opcao )) ){
-        limpa_linha(1);
-        voltar(linhas);
-    }
+    printf("\nAperte ENTER para voltar...\n");
+    flush_in();
+    getchar();
 }
 
 
