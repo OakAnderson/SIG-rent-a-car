@@ -174,7 +174,10 @@ int val_cpf( char* cpf ){
         }
 
         digito1 = (digito1*10) % 11;
-        if( digito1 != d1 - '0' ){
+        if( digito1 == 10 ){
+            digito1 = 0;
+        }
+        if( digito1 != (d1 - '0') ){
             return 0;
         }
 
@@ -192,14 +195,15 @@ int val_cpf( char* cpf ){
             }
 
             digito2 = (digito2*10) % 11;
+            if( digito2 == 10 ){
+                digito2 = 0;
+            }
 
             if ((digito1*10 + digito2) != ((d1 - '0')*10) + (d2 - '0')){
                 return 0;
             }
         }
-    }
-
-    else{
+    } else {
         return 0;
     }
     
