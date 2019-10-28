@@ -1,4 +1,6 @@
 /* TAD: Funções que valida strings */
+#ifndef VALIDACOES_H
+#define VALIDACOES_H
 
 /* Função valida REGEX
 ** Operação que recebe uma regex e uma frase, combina e retorna
@@ -92,6 +94,19 @@ int val_inteiro( char* entrada );
 */
 int val_SN( char* entrada );
 
+
+/* Função valida username
+** Operação que valida nome de usuário
+*/
+int val_username( char* entrada );
+
+
+/* Função valida senha
+** Operação que valida senha de usuário
+*/
+int val_senha( char* entrada );
+
+
 /* Função valida idade
 ** Verifica se o usuário tem a data mínima para cadastro
 */
@@ -101,3 +116,4 @@ int val_idade( char* data );
 ** Verifica se os nomes inseridos são equivalentes
 */
 int cmp_nomes( char*, char* );
+#endif

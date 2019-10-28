@@ -1,18 +1,16 @@
-#ifndef BIBLIOTECAS
-    #define BIBLIOTECAS
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
-    #include <regex.h>
-    #include <time.h>
-    #include <unistd.h>
-    #include <ctype.h>
-    #include "cliente.h"
-    #include "mylib.h"
-    #include "validacoes.h"
-    #include "menu.h"
-    #include "veiculo.h"
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <time.h>
+#include <unistd.h>
+#include <ctype.h>
+#include "usuario.h"
+#include "cliente.h"
+#include "mylib.h"
+#include "validacoes.h"
+#include "menu.h"
+#include "veiculo.h"
 
 
 void get_menu_p( int n ){
@@ -21,7 +19,7 @@ void get_menu_p( int n ){
     {
     case 1:
         imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 2 ) );
+        get_menu_cliente( menu_escolha( 3 ) );
         break;
     
     case 2:
@@ -101,7 +99,13 @@ void get_menu_cliente( int n ){
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
         break;
-*/
+    */
+    case 3:
+        system("clear");
+        clnt_mostra_todos();
+        voltar(0);
+        imp_menu_cliente();
+        get_menu_cliente( menu_escolha( 2 ) );
     case 0:
         imp_menu_p();
         get_menu_p( menu_escolha( 5 ) );
@@ -118,6 +122,7 @@ void imp_menu_cliente( void ){
     printf("_ _ _ _ _ MENU CLIENTE _ _ _ _ _\n\n");
     printf("1 - Cadastrar cliente\n");
     printf("2 - Visualizar dados do cliente\n");
+    printf("3 - Visualizar todos os clientes\n");
     printf("0 - sair\n");
 }
 

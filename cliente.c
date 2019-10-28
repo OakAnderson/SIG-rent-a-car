@@ -1,18 +1,16 @@
-#ifndef BIBLIOTECAS
-    #define BIBLIOTECAS
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
-    #include <regex.h>
-    #include <time.h>
-    #include <unistd.h>
-    #include <ctype.h>
-    #include "cliente.h"
-    #include "mylib.h"
-    #include "validacoes.h"
-    #include "menu.h"
-    #include "veiculo.h"
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <time.h>
+#include <unistd.h>
+#include <ctype.h>
+#include "usuario.h"
+#include "cliente.h"
+#include "mylib.h"
+#include "validacoes.h"
+#include "menu.h"
+#include "veiculo.h"
 
 
 typedef struct client {
@@ -99,6 +97,25 @@ Cliente* clnt_recupera_cpf( void ){
 
     clnt_libera( pessoa );
     return NULL;
+}
+
+
+void clnt_mostra_todos( void ){
+    char* nome;
+    FILE* arquivo;
+    Cliente* pessoa;
+    
+    arquivo = fopen("Cliente.dat", "rb");
+
+    fread( pessoa, sizeof(Cliente), 1, arquivo );
+    while( !feof(arquivo) ){
+        printf("%d --------------------\n");
+        clnt_mostra( pessoa );
+
+        fread( pessoa, sizeof(Cliente), 1, arquivo );
+    }
+
+    fclose(arquivo);
 }
 
 

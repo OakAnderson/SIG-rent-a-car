@@ -1,18 +1,16 @@
-#ifndef BIBLIOTECAS
-    #define BIBLIOTECAS
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
-    #include <regex.h>
-    #include <time.h>
-    #include <unistd.h>
-    #include <ctype.h>
-    #include "cliente.h"
-    #include "mylib.h"
-    #include "validacoes.h"
-    #include "menu.h"
-    #include "veiculo.h"
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <time.h>
+#include <unistd.h>
+#include <ctype.h>
+#include "usuario.h"
+#include "cliente.h"
+#include "mylib.h"
+#include "validacoes.h"
+#include "menu.h"
+#include "veiculo.h"
 
 
 typedef struct veiculo {

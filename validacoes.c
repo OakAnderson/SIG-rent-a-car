@@ -1,18 +1,17 @@
-#ifndef BIBLIOTECAS
-    #define BIBLIOTECAS
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
-    #include <regex.h>
-    #include <time.h>
-    #include <unistd.h>
-    #include <ctype.h>
-    #include "cliente.h"
-    #include "mylib.h"
-    #include "validacoes.h"
-    #include "menu.h"
-    #include "veiculo.h"
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <time.h>
+#include <unistd.h>
+#include <ctype.h>
+#include "usuario.h"
+#include "cliente.h"
+#include "mylib.h"
+#include "validacoes.h"
+#include "menu.h"
+#include "veiculo.h"
+
 
 #define REGEX_EMAIL "^[0-9a-zA-Z]([-\\.a-z0-9_]*[0-9a-zA-Z_\\+])*@([0-9a-zA-Z][-a-z0-9_]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9}$" 
 // Expressão REGEX_EMAIL baseada no livro "Regular Expression Pocket Reference: Regular Expressions for Perl, Ruby, PHP, Python, C, Java and .NET" de Tony Stubblebine
@@ -35,6 +34,11 @@
 #define REGEX_ANO "^[0-9]{4}$"
 
 #define REGEX_RENAVAM "^[0-9]{11}$"
+
+#define REGEX_USERNAME "^[a-z0-9]{6, 20}$"
+
+#define REGEX_SENHA "^[\\x20-\\x7E]{6, 20}$"
+
 
 int val_regex( char* expReg, char* frase ){
     regex_t expressao;
@@ -205,6 +209,16 @@ int val_cpf( char* cpf ){
 
 int val_SN( char* entrada ){
     return val_regex( REGEX_SN, entrada );
+}
+
+
+int val_username( char* entrada ){
+    return val_regex( REGEX_USERNAME, entrada );
+}
+
+
+int val_senha( char* entrada ){
+    return val_regex( REGEX_SENHA, entrada );
 }
 
 

@@ -1,5 +1,6 @@
 /* TAD: Menus */
-
+#ifndef MENU_H
+#define MENU_H
 
 /* Função get menu principal
 ** Operação que executa um menu secundário de acordo com a escolha do usuário
@@ -52,3 +53,4 @@ void imp_sobre( void );
 ** Operação que mostra na tela as opções de recuperação de dados
 */
 void imp_clnt_visualizarDados( void );
+#endif

@@ -1,3 +1,6 @@
+#ifndef CLIENTE_H
+#define CLIENTE_H
+
 /*TAD: Funções para trabalhar com a estrutura cliente */
 
 typedef struct client Cliente;
@@ -84,3 +87,9 @@ void clnt_mostra( Cliente* pessoa );
 ** Operação que inicia o cadastro do cliente
 */
 void clnt_cad( void );
+
+/* Função mostra todos os clientes
+** Operação que mostra na tela todos os clientes cadastrados
+*/
+void clnt_mostra_todos( void );
+#endif

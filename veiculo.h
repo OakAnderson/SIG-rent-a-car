@@ -1,5 +1,6 @@
 /* TAD: veiculo */
-
+#ifndef VEICULO_H
+#define VEICULO_H
 
 typedef struct veiculo Veiculo;
 
@@ -88,3 +89,4 @@ void veic_mostra( Veiculo* );
 ** Operação que recebe os dados de um veículo
 */
 void veic_cad( void );
+#endif

@@ -1,5 +1,6 @@
 /*TAD: Minha biblioteca para o SIG-car */
-
+#ifndef MYLIB_H
+#define MYLIB_H
 
 
 /* Função get menu
@@ -56,3 +57,4 @@ int dia_atual( void );
 ** Operação que solicita ao cliente se ele deseja voltar
 */
 void voltar( int );
+#endif
