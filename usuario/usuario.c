@@ -24,9 +24,9 @@ int usr_recupera( Usuario* usuarioEntrada ){
     FILE* arquivo;
     Usuario* usuarioSaida;
 
-    arquivo = fopen("Usuario.dat", "rb");
+    arquivo = fopen("usuario/Usuario.dat", "rb");
     if( arquivo == NULL){
-        arquivo = fopen("Usuario.dat", "wb");
+        arquivo = fopen("usuario/Usuario.dat", "wb");
         return -1;
     }
 
@@ -106,9 +106,9 @@ void usr_cad(char *nome, char *senha ){
     FILE* arquivo;
     int result;
 
-    arquivo = fopen("Usuario.dat", "ab");
+    arquivo = fopen("usuario/Usuario.dat", "ab");
     if(arquivo == NULL){
-        arquivo = fopen("Usuario.dat", "wb");
+        arquivo = fopen("usuario/Usuario.dat", "wb");
     }
 
     user = (Usuario*) malloc(sizeof(Usuario));
