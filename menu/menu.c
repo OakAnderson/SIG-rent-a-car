@@ -24,30 +24,20 @@ void get_menu_p( int n ){
     
     case 2:
         imp_menu_veiculo();
-        get_menu_veiculo( menu_escolha( 2 ) );
+        get_menu_veiculo( menu_escolha( 4 ) );
         break;
 
     case 3:
         system("clear");
-        printf("EM CONSTRUÇÃO.\n");
-        sleep( 2 );
-        imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
+        imp_menu_aluguel();
+        get_menu_aluguel( menu_escolha( 2 ) );
         break;
 
     case 4:
-        system("clear");
-        printf("EM CONSTRUÇÃO.\n");
-        sleep( 2 );
-        imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
-        break;
-
-    case 5:
         imp_sobre();
         voltar(0);
         imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
+        get_menu_p( menu_escolha( 4 ) );
         break;
     
     case 0:
@@ -68,9 +58,8 @@ void imp_menu_p( void ){
     printf("_ _ _ _ _ SIG CAR: Locadora de automóveis _ _ _ _ _\n\n");
     printf("1 - Menu cliente\n");
     printf("2 - Menu veículo\n");
-    printf("3 - Efetuar devolução\n");
-    printf("4 - Efetuar aluguel\n");
-    printf("5 - Sobre\n");
+    printf("3 - Menu aluguel\n");
+    printf("4 - Sobre\n");
     printf("0 - Encerrar o programa\n");
 }
 
@@ -83,8 +72,8 @@ void get_menu_cliente( int n ){
         printf("\n\n_ _ _ _ _ CADASTRO DE CLIENTE _ _ _ _ _\n\n");
         clnt_cad();
         voltar(0);
-        imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
+        imp_menu_cliente();
+        get_menu_cliente( menu_escolha( 4 ) );
         break;
 
     case 2:
@@ -106,7 +95,7 @@ void get_menu_cliente( int n ){
         get_menu_cliente( menu_escolha( 4 ) );
     case 0:
         imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
+        get_menu_p( menu_escolha( 4 ) );
 
     default:
         printf("Não foi possível abrir o menu\n");
@@ -134,19 +123,29 @@ void get_menu_veiculo( int n ){
         printf("\n\n_ _ _ _ _ CADASTRO DE VEÍCULO _ _ _ _ _\n\n");
         veic_cad();
         voltar(0);
-        imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
+        imp_menu_veiculo();
+        get_menu_veiculo( menu_escolha( 4 ) );
 
     case 2:
         system("clear");
-        printf("EM CONSTRUÇÃO.\n");
-        sleep( 2 );
-        imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
+        veic_re_dados();
+        imp_menu_veiculo();
+        get_menu_veiculo( menu_escolha( 4 ) );
         break;
+    case 3:
+        system("clear");
+        veic_mostra_todos();
+        voltar(0);
+        imp_menu_veiculo();
+        get_menu_veiculo( menu_escolha( 4 ) );
+    case 4:
+        system("clear");
+        veic_deleta();
+        imp_menu_veiculo();
+        get_menu_veiculo( menu_escolha( 4 ) );
     case 0:
         imp_menu_p();
-        get_menu_p( menu_escolha( 5 ) );
+        get_menu_p( menu_escolha( 4 ) );
         break;
     
     default:
@@ -161,7 +160,47 @@ void imp_menu_veiculo( void ){
     printf("_ _ _ _ _ MENU VEÍCULO _ _ _ _ _\n\n");
     printf("1 - Cadastrar veículo\n");
     printf("2 - Visualizar status do veículo\n");
+    printf("3 - Mostrar todos os veículos\n");
+    printf("4 - Deletar veículo\n");
     printf("0 - sair\n");
+}
+
+
+void imp_menu_aluguel( void ){
+    printf("\n- - - - - MENU ALUGUEL - - - - -\n");
+    printf("1 - Alugar um veículo\n");
+    printf("2 - Devolver um veículo\n");
+    printf("0 - sair\n");
+}
+
+
+void get_menu_aluguel( int n ){
+    switch (n)
+    {
+    case 1:
+        system("clear");
+        printf("EM CONSTRUÇÃO.\n");
+        sleep( 2 );
+        imp_menu_aluguel();
+        get_menu_aluguel( menu_escolha( 2 ) );
+        break;
+    
+    case 2:
+        system("clear");
+        printf("EM CONSTRUÇÃO.\n");
+        sleep( 2 );
+        imp_menu_aluguel();
+        get_menu_aluguel( menu_escolha( 2 ) );
+        break;
+    
+    case 0:
+        imp_menu_p();
+        get_menu_p( menu_escolha( 4 ) );
+        break;
+    
+    default:
+        break;
+    }
 }
 
 
@@ -180,5 +219,5 @@ void imp_clnt_visualizarDados( void ){
 
 void inicia_programa( void ){
     imp_menu_p();
-    get_menu_p( menu_escolha( 5 ) );
+    get_menu_p( menu_escolha( 4 ) );
 }

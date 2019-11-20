@@ -31,6 +31,18 @@ void imp_menu_veiculo( void );
 void get_menu_veiculo( int );
 
 
+/* Função imprime menu aluguel
+** Operação que mostra na tela o menu secundário de opções para aluguel
+*/
+void imp_menu_aluguel( void );
+
+
+/* Função get menu aluguel
+** Operação que obtém e executa a escolha do usuário
+*/
+void get_menu_aluguel( int );
+
+
 /* Função inicia programa
 ** Operação que dá início ao programa, começando pela tela principal
 */
