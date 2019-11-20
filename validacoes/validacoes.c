@@ -19,17 +19,23 @@
 #define REGEX_DATA "^(3[0-1]|[12][0-9]|0[1-9])/?(0[1-9]|1[0-2])/?([0-9]{2})?([0-9]{2})$"
 // Expressão REGEX_DATA baseada no livro "Expressões regulares cookbook" de Jan Goyvaerts
 
+#define REGEX_KM "^[0-9]{1,5}$"
+
+#define REGEX_ENDERECO "^[a-z0-9à-ú\\. ]*$"
+
+#define REGEX_BAIRRO "^[a-zà-ú ]{3,20}+$"
+
 #define REGEX_CPF "^([0-9]{3})\\.?([0-9]{3})\\.?([0-9]{3})-?([0-9]{2})$"
 
-#define REGEX_NUMERO "^\\(?([0-9]{2})\\)?([0-9]{4,5})[-.]?([0-9]{4})$"
+#define REGEX_NUMERO "^\\(?([0-9]{2})\\)? ?([0-9]{4,5})[-\\.]?([0-9]{4})$"
 
-#define REGEX_NOME "^[A-Z\\. ]{3,50}+$"
+#define REGEX_NOME "^[a-zà-ú\\. ]{3,50}+$"
 
 #define REGEX_SN "^(s(im)?|n(ao)?)$"
 
 #define REGEX_PLACA "^[a-z]{3}\\-?[0-9]{4}$"
 
-#define REGEX_MARCA "^[a-z ]+$"
+#define REGEX_MARCA "^[a-z \\-]+$"
 
 #define REGEX_ANO "^[0-9]{4}$"
 
@@ -38,6 +44,8 @@
 #define REGEX_USERNAME "^[a-z0-9]{6,20}$"
 
 #define REGEX_SENHA "^[\\x20-\\x7E]{6,20}$"
+
+#define REGEX_PRECO "^[0-9]{2,5}(,|\\.)?([0-9]{2})?$"
 
 
 int val_regex( char* expReg, char* frase ){
@@ -101,7 +109,6 @@ int bissesto( int ano ){
 
     return 0;
 }
-
 
 
 int val_email( char* email ){
@@ -292,6 +299,26 @@ int val_idade( char* data ){
 
 int val_nome( char* nome ){
     return val_regex( REGEX_NOME, nome );
+}
+
+
+int val_endereco( char* endereco ){
+    return val_regex( REGEX_ENDERECO, endereco );
+}
+
+
+int val_bairro( char* bairro ){
+    return val_regex( REGEX_BAIRRO, bairro );
+}
+
+
+int val_km( char* km ){
+    return val_regex(REGEX_KM, km);
+}
+
+
+int val_preco( char* preco ){
+    return val_regex(REGEX_PRECO, preco);
 }
 
 

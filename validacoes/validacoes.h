@@ -20,7 +20,7 @@ int val_email( char* email );
 
 /* Função valida placa
 ** Operação que retorna o resultado da função val_regex combinando
-** para placas
+** para placas..
 ** Retorna 1 se for válido
 */
 int val_placa( char* );
@@ -111,6 +111,31 @@ int val_senha( char* entrada );
 ** Verifica se o usuário tem a data mínima para cadastro
 */
 int val_idade( char* data );
+
+
+/* Função valida endereço
+** Verifica se o endereço atende os parâmetros
+*/
+int val_endereco( char* endenreco );
+
+
+/* Função valida bairro
+** Verifica se o bairro atende os parâmetros
+*/
+int val_bairro( char* bairro );
+
+
+/* Função valida quilometragem
+** Verifica se a quilometragem atende os parâmetros
+*/
+int val_km( char* km );
+
+
+/* Função valida preço
+** Verifica se o preço atende os parâmetros
+*/
+int val_preco( char* preco );
+
 
 /* Função compara nomes
 ** Verifica se os nomes inseridos são equivalentes
