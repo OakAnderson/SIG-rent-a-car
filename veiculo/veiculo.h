@@ -65,6 +65,12 @@ void veic_mostra_renavam( Veiculo* );
 void veic_mostra_placa( Veiculo* );
 
 
+/* Função mostra todos
+** Operação que mostra na tela todos os veículos cadastrados
+*/
+void veic_mostra_todos( void );
+
+
 /* Função libera veiculo
 ** Operação que libera o espaço alocado na memória para
 ** a estrutura de um veículo
@@ -89,4 +95,25 @@ void veic_mostra( Veiculo* );
 ** Operação que recebe os dados de um veículo
 */
 void veic_cad( void );
+
+
+/* Função recupera por placa
+** Opração que recebe como entrada a placa de um carro e
+** o mostra se estiver cadastrado
+*/
+Veiculo* veic_recupera_placa( void );
+
+
+/* Função visualizar dados
+** Operação que permite o usuário a navegar pelo menu
+** visualizar dados do veículo
+*/
+void veic_re_dados( void );
+
+
+/* Função deleta veículo
+** Operação que obtem informação de que veiculo
+** deletar e o deleta
+*/
+void veic_deleta( void );
 #endif
