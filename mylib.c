@@ -13,6 +13,30 @@
 #include "veiculo/veiculo.h"
 
 
+
+// Função copiada de https://pt.stackoverflow.com/questions/9427/limpeza-do-buffer-do-teclado-após-scanf
+void flush_in() {
+    int ch;
+    do {
+        ch = fgetc(stdin);
+    } while (ch != EOF && ch != '\n');
+}
+
+
+float eval(float num, int exp){
+    if( exp == 1 ){
+        return num;
+    } else if( exp == 0){
+        return 1;
+    }
+
+    if( exp > 0 )
+        return num * eval(num, exp-1);
+    else
+        return eval(num, exp+1)/num;
+}
+
+
 char* entr_str( char* frase ){
     char entrada[128];
     char* resultado;
@@ -68,6 +92,84 @@ int dia_atual( void ){
 }
 
 
+char* form_numero( char* entrada, int mostrar ){
+    int indx = 0, i = 0;
+    char* saida;
+
+    if (mostrar){
+        saida = (char*) malloc (sizeof(char)*16);
+        for( i=0; entrada[i] != '\0'; i++ ){
+            if (i == 0){
+                saida[0] = '(';
+                saida[1] = entrada[i];
+                indx++;
+            }
+
+            else if (i == 1){
+                saida[2] = entrada[i];
+                saida[3] = ')';
+                indx++;
+            }
+            
+            else if ((strlen(entrada) == 11 && i == 6) || (strlen(entrada) == 10 && i == 5)){
+                saida[indx] = entrada[i];
+                saida[indx+1] = '-';
+                indx++;
+            }
+
+            else{
+                saida[indx] = entrada[i];
+            }
+            
+            indx++;
+        }
+
+    }
+    else{
+        saida = (char*) malloc (sizeof(char)*12);
+        for( i = 0; entrada[i] != '\0'; i++ ){
+            if( !(entrada[i] == '(' || entrada[i] == ')' || entrada[i] == ' ' || entrada[i] == '-' )){
+                saida[indx] = entrada[i];
+                indx++;
+            }
+        }
+        saida[indx] = '\0';
+    }
+
+    strcpy(entrada, saida);
+}
+
+
+float form_preco( char* entrada ){
+    float preco;
+    int v = 0, count = 0;
+
+    for( int i = 0; entrada[i] != '\0'; i++ ){
+        if( entrada[i] == ',' || entrada[i] == '.' ){
+            v = i;
+        }
+    }
+
+    if( !v ){
+        v = strlen(entrada);
+    }
+    for( int i = 0; entrada[i] != '\0'; i++ ){
+        printf("GOTCHA\n");
+        if( v > 0 && entrada[i] != '.' && entrada[i] != ',' ){
+            preco += (entrada[i] - '0') * eval(10.0, --v);
+        }
+        else if( entrada[i-1] == ',' || entrada[i-1] == '.' ){
+            preco += (entrada[i] - '0') * 0.1;
+        }
+        else if( entrada[i-2] == ',' || entrada[i-2] == '.' ){
+            preco += (entrada[i] - '0') * 0.01;
+        }
+    }
+
+    return preco;
+}
+
+
 char* form_cpf( char* entrada ){
     int cont = 0, p2 = 7, h1 = 11;
     char* resultado;
@@ -120,15 +222,6 @@ char* form_data( char* entrada ){
     }
 
     return resultado;
-}
-
-
-// Função copiada de https://pt.stackoverflow.com/questions/9427/limpeza-do-buffer-do-teclado-após-scanf
-void flush_in() {
-    int ch;
-    do {
-        ch = fgetc(stdin);
-    } while (ch != EOF && ch != '\n');
 }
 
 

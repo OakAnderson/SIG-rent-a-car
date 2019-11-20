@@ -13,13 +13,12 @@
 #include "veiculo/veiculo.h"
 
 
-int main ( void ){
-    char* a;
-
+int main ( int args, char** argv ){
     system("clear");
     printf("\n_ _ _ _ _ LOGIN _ _ _ _ _\n\n");
 
-    usr_login();
+    if( args == 1)
+        usr_login();
     
     inicia_programa();
     return 0;

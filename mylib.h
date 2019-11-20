@@ -22,6 +22,12 @@ char* entr_str( char* frase );
 int menu_escolha( int n);
 
 
+/* Função formata preco
+** Função que retorna o valor de um float a partir
+** de uma string
+*/
+float form_preco( char* );
+
 
 /* Função formata CPF
 ** Coloca os pontos e o hífen na posição correta
@@ -33,6 +39,13 @@ char* form_cpf( char* entrada );
 ** Coloca as barras nas posições corretas
 */
 char* form_data(  char* entrada);
+
+
+/* Função formata número
+** Retorna um novo vetor de caracteres com ou sem formatação
+** depende da variável mostrar
+*/
+char* form_numero( char* entrada, int mostrar );
 
 
 /* Função ano atual
@@ -57,4 +70,10 @@ int dia_atual( void );
 ** Operação que solicita ao cliente se ele deseja voltar
 */
 void voltar( int );
+
+
+/* Função obtem resposta
+** Operação que retorna 1 se a resposta do usuário for sim
+*/
+int get_resposta( char* );
 #endif
