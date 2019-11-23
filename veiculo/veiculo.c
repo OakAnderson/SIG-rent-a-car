@@ -40,10 +40,10 @@ int veic_compara( Veiculo* veiculo1, Veiculo* veiculo2 ){
 }
 
 
-Lista* veic_recupera( void ){
+Array* veic_recupera( void ){
     FILE* arquivo;
     Veiculo* veiculo;
-    Lista* listaVeiculo;
+    Array* listaVeiculo;
 
     arquivo = fopen("veiculo/Veiculo.dat", "rb");
     if( arquivo == NULL ){
@@ -81,7 +81,7 @@ void veic_copia( Veiculo* veiculo1, Veiculo* veiculo2 ){
 
 Veiculo* veic_recupera_placa( void ){
     char* placa;
-    Lista* listaVeiculo;
+    Array* listaVeiculo;
     Veiculo* veiculo;
 
     placa = entr_str("Digite a placa do veículo: ");
@@ -227,7 +227,7 @@ void veic_deleta( void ){
 
 
 void veic_mostra_todos( void ){
-    Lista* listaVeiculo;
+    Array* listaVeiculo;
     Veiculo *busca;
 
     listaVeiculo = veic_recupera();
