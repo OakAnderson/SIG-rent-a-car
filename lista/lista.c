@@ -14,110 +14,344 @@
 #include "../menu.h"
 
 
-typedef struct lista{
+#define par(a) a % 2 == 0 ? (1) : (0)
+
+typedef struct _elemento {
     void* info;
-    struct lista* prox;
-} Lista;
+    struct _elemento* ant;
+    struct _elemento* prox;
+} Elem;
 
 
-Lista* arrayCria( void ){
-    Lista* array;
-
-    srand(clock());
-
-    array = (Lista*) malloc (sizeof(Lista));
-
-    array->info = NULL;
-    array->prox = NULL;
-
-    return array;
-}
+typedef struct _array {
+    struct _elemento* ini;
+    struct _elemento* fim;
+    int size;
+} Array;
 
 
-Lista* acessa( Lista* array, int indice ){
-    Lista* i, *inicio;
-    int j;
+typedef struct node {
+    void* info;
+    struct node *left;
+    struct node *right;
+} Node;
 
-    if( indice == -1 ){
-        return array;
-    }
 
-    j = indice % 2 == 0;
-    inicio = j ? array : array->prox;
+typedef struct tree {
+    struct node *root;
+} Tree;
 
-    for( i = inicio, j = !j; i != NULL; i = i->prox->prox, j += 2 ){
-        if( j == indice ){
-            return i->prox;
-        }
-    }
 
+void indice_error(void){
     printf("Indíce fora da lista.\n");
     exit(1);
 }
 
 
-void append( Lista* array, void* novoElemento ){
-    Lista* nova, *busca;
+Node* setNode( void* info ){
+    Node* new = (Node*) malloc (sizeof(Node));
 
-    nova = arrayCria();
+    new->info = info;
+    new->left = NULL;
+    new->right = NULL;
 
-    nova->info = novoElemento;
-
-    busca = array;
-    while( busca->prox != NULL ){
-        busca = busca->prox;
-    }
-
-    busca->prox = nova;
+    return new;
 }
 
 
-int size( Lista* array ){
-    Lista* i;
-    int j;
+void addNodeClienteNome( Node* node, Node* new ){
+    int side;
+    Cliente* nodeC, *newC;
 
-    if( array->prox == NULL ){
-        return 0;
+    nodeC = (Cliente*) node->info;
+    newC = (Cliente*) new->info;
+
+    side = strcmp(clnt_nome(nodeC), clnt_nome(newC));
+
+    if( side < 0 ){
+        if( node->left == NULL ){
+            node->left = new;
+        } else {
+            addNodeClienteNome(node->left, new);
+        }
+    } else if( side > 0 ){
+        if( node->right == NULL ){
+            node->right = new;
+        } else {
+            addNodeClienteNome(node->right, new);
+        }
     }
-
-    for( i = array->prox, j = 0; i->prox != NULL; i = i->prox, j++ ){
-    }
-
-    return j+1;
 }
 
 
-void pop( Lista* array, int indice ){
-    Lista* aux, *aux1;
+void addNodeClienteCPF( Node* node, Node* new ){
+    int side;
+    Cliente* nodeC, *newC;
+
+    nodeC = (Cliente*) node->info;
+    newC = (Cliente*) new->info;
+
+    side = strcmp(clnt_cpf(nodeC), clnt_cpf(newC));
+
+    if( side < 0 ){
+        if( node->left == NULL ){
+            node->left = new;
+        } else {
+            addNodeClienteCPF(node->left, new);
+        }
+    } else if( side > 0 ){
+        if( node->right == NULL ){
+            node->right = new;
+        } else {
+            addNodeClienteCPF(node->right, new);
+        }
+    }
+}
+
+
+Tree* newTree( void ){
+    return (Tree*) malloc (sizeof(Tree));
+}
+
+
+void addClienteNome( Tree* tree, void* cliente ){
+    Node* new;
+
+    new = setNode(cliente);
+    if( tree->root == NULL ){
+        srand(clock());
+        tree->root = new;
+    } else {
+        addNodeClienteNome(tree->root, new);
+    }
+}
+
+
+void addClienteCPF( Tree* tree, void* cliente ){
+    Node* new;
+
+    new = setNode(cliente);
+    if( tree->root == NULL ){
+        srand(clock());
+        tree->root = new;
+    } else {
+        addNodeClienteCPF(tree->root, new);
+    }
+}
+
+
+Cliente* searchNodeClienteNome( Node* node, char* palavra ){
+    int achou;
+    Cliente* nodeC;
+
+    nodeC = (Cliente*) node->info;
+
+    achou = cmp_nomes(palavra, clnt_nome(nodeC));
+
+    if( achou == 0 ){
+        return (Cliente*) node->info;
+    } else if( achou < 0 ){
+        if( node->left != NULL ){
+            return searchNodeClienteNome( node->left, palavra );
+        } else {
+            return NULL;
+        }
+    } else if ( achou > 0 ){
+        if( node->right != NULL ){
+            return searchNodeClienteNome( node->right, palavra );
+        } else {
+            return NULL;
+        }
+    }
+}
+
+
+Cliente* searchNodeClienteCPF( Node* node, char* palavra ){
+    int achou;
+    Cliente* nodeC;
+
+    nodeC = (Cliente*) node->info;
+
+    achou = strcmp(palavra, clnt_cpf(nodeC));
+
+    if( achou == 0 ){
+        return (Cliente*) node->info;
+    } else if( achou > 0 ){
+        if( node->left != NULL ){
+            return searchNodeClienteCPF( node->left, palavra );
+        } else {
+            return NULL;
+        }
+    } else if ( achou < 0 ){
+        if( node->right != NULL ){
+            return searchNodeClienteCPF( node->right, palavra );
+        } else {
+            return NULL;
+        }
+    }
+}
+
+
+Cliente* searchClienteNome( Tree* tree, char* palavra ){
+    return searchNodeClienteNome(tree->root, palavra);
+}
+
+
+Cliente* searchClienteCPF( Tree* tree, char* palavra ){
+    return searchNodeClienteCPF(tree->root, palavra);
+}
+
+
+Elem* acessaInversa( Array* array, int indice ){
+    Elem* inicio;
+    int cont = array->size-1;
+
+    if( ((par(cont)) && (par(indice))) || (!(par(cont)) && !(par(indice))) ){
+        inicio = array->fim;
+        cont = array->size-1;
+    } else {
+        inicio = array->fim->ant;
+        cont = array->size-2;
+    }
+
+    for( Elem *i = inicio; i != NULL; i = i->ant->ant, cont-=2 ){
+        if( cont == indice ){
+            return i;
+        }
+    }
+}
+
+
+Elem* acessaFrente( Array* array, int indice ){
+    Elem* inicio;
+    int cont = 0;
+
+    if( par(indice) ){
+        inicio = array->ini->prox->prox;
+        cont = 2;
+    } else {
+        inicio = array->ini->prox;
+        cont = 1;
+    }
+
+    for( Elem *i = inicio; i != NULL; i = i->prox->prox, cont+=2 ){
+        if( cont == indice ){
+            return i;
+        }
+    }
+}
+
+
+Array* arrayCria( void ){
+    Array* novo;
+
+    srand(clock());
+
+    novo = ( Array* ) malloc ( sizeof(Array) );
+
+    novo->ini = NULL;
+    novo->fim = NULL;
+    novo->size = 0;
+
+    return novo;
+}
+
+
+Elem* acessa( Array* array, int indice ){
+    Elem* i, *inicio;
+    int cont, auxI;
+
+    auxI = indice;
+
+    if( indice == -1 )
+        return array->fim;
+
+    else if( indice == 0 )
+        return array->ini;
+
+    else if( indice > array->size )
+        indice_error();
     
-    if( array->prox == NULL ){
-        printf("Indíce fora da lista.\n");
-        exit(1);
+    else if( indice < 0 )
+        auxI = array->size + indice;
+
+
+    if( auxI > array->size/2 )
+        return acessaInversa(array, auxI);
+
+    else
+        return acessaFrente(array, auxI);
+}
+
+void append( Array* array, void* elemento ){
+    Elem* novo;
+    if( array->size == 0 ){
+        novo = (Elem*) malloc(sizeof(Elem));
+        novo->ant = NULL; novo->prox = NULL;
+        novo->info = elemento;
+        array->fim = novo;
+        array->ini = novo;
+        array->size++;
+    } else {
+        novo = (Elem*) malloc(sizeof(Elem));
+        novo->info = elemento;
+        novo->ant = array->fim;
+        novo->prox = NULL;
+        array->fim->prox = novo;
+        array->fim = novo;
+        array->size++;
+    }
+}
+
+
+int size( Array* array ){
+    return array->size;
+}
+
+
+void pop( Array* array, int indice ){
+    Elem *aux1;
+    
+    if( array->ini == NULL ){
+        indice_error();
     }
 
     aux1 = acessa(array, indice);
 
-    if( aux1->prox == NULL ){
-        acessa(array, indice-1)->prox = NULL;
+    if( indice == 0 ){
+        array->ini = aux1->prox;
+        array->ini->ant = NULL;
+    } else if( aux1->prox == NULL ){
+        aux1->ant->prox = NULL;
+        array->fim = aux1->ant;
     } else {
-        aux = acessa(array, indice+1);
-        acessa(array, indice-1)->prox = aux1;
+        aux1->ant->prox = aux1->prox;
+        aux1->prox->ant = aux1->ant;
     }
 
+    free(aux1->info);
     free(aux1);
 }
 
 
-void liberaLista( Lista* array ){
-    if( array != NULL ){
-        liberaLista(array->prox);
-        free(array);
+void __liberaElems__( Elem* elemento ){
+    if( elemento != NULL ){
+        __liberaElems__(elemento->prox);
+        free(elemento->info);
+        free(elemento);
     }
 }
 
 
-void swap( Lista* array, int indice1, int indice2 ){
-    Lista *pI1, *pI2, pn1;
+void liberaLista( Array* array ){
+    if( array != NULL ){
+        __liberaElems__(array->ini);
+    }
+}
+
+
+void swap( Array* array, int indice1, int indice2 ){
+    Elem *pI1, *pI2, pn1;
 
     if( indice1 == indice2 ){
         return;
@@ -131,61 +365,8 @@ void swap( Lista* array, int indice1, int indice2 ){
 }
 
 
-void* pos( Lista* array, int indice ){
-    Lista* i, *inicio;
-    int j;
-
-    if( array->prox == NULL ){
-        printf("Indíce fora da lista.\n");
-        exit(1);
-    }
-        
-
-    j = indice % 2 == 0;
-    inicio = j ? array : array->prox;
-
-    for( i = inicio, j = !j; i->prox != NULL; i = i->prox->prox, j += 2 ){
-        if( j == indice ){
-            return i->prox->info;
-        }
-    }
-
-    printf("Indíce fora da lista.\n");
-    exit(1);
+void* pos( Array* array, int indice ){
+    return acessa(array, indice)->info;
 }
 
 
-
-
-
-/*
-void quicksortStr( Lista* array, int began, int end ){
-    int i, j, pivo;
-    
-    i = began;
-    j = end - 1;
-    pivo = pos(array, (began + end)/2);
-
-    while( i <= j ){
-        while( pos(array, i) < pivo && i < end ){
-            i++;
-        }
-        while( pos(array, j) > pivo && j > began ){
-            j--;
-        }
-        if( i <= j ){
-            swap(array, i, j);
-            i++;
-            j--;
-        }
-    }
-
-    if( j > began ){
-        quicksort( array, began, j+1 );
-    }
-    if( i < end ){
-        quicksort( array, i, end );
-    }
-}
-
-*/
