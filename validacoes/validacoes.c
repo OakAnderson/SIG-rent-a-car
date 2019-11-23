@@ -23,7 +23,7 @@
 
 #define REGEX_ENDERECO "^[a-z0-9à-ú\\. ]*$"
 
-#define REGEX_BAIRRO "^[a-zà-ú ]{3,20}+$"
+#define REGEX_BAIRRO "^[a-zà-ú\' ]{3,20}+$"
 
 #define REGEX_CPF "^([0-9]{3})\\.?([0-9]{3})\\.?([0-9]{3})-?([0-9]{2})$"
 
@@ -325,12 +325,14 @@ int val_preco( char* preco ){
 int cmp_nomes(char* nome1, char* nome2){
 
     for( int i = 0; nome1[i] != '\0'; i++ ){
-        if( tolower(nome1[i]) != tolower(nome2[i]) ){
-            return 0;
+        if( tolower(nome1[i]) > tolower(nome2[i]) ){
+            return -1;
+        } else if(tolower(nome1[i]) < tolower(nome2[i])){
+            return 1;
         }
     }
 
-    return 1;
+    return 0;
 }
 
 
