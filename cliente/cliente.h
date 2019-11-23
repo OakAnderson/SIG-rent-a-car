@@ -111,4 +111,17 @@ int clnt_existe( Cliente* );
 */
 void clnt_deleta( void );
 
+
+/* Função cliente nome
+** Operação que retorna o nome do cliente
+*/
+char* clnt_nome( Cliente* );
+
+
+/* Função cliente cpf
+** Operação que retorna o cpf do cliente
+*/
+char* clnt_cpf( Cliente* );
+
+
 #endif

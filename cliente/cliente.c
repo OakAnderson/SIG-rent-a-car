@@ -30,6 +30,16 @@ typedef struct client {
 } Cliente;
 
 
+char* clnt_nome( Cliente* pessoa ){
+    return pessoa->nome;
+}
+
+
+char* clnt_cpf( Cliente* pessoa ){
+    return pessoa->cpf;
+}
+
+
 int clnt_salva( Cliente* pessoa ){
     FILE *arquivo;
     Cliente* save = clnt_cria();
@@ -65,10 +75,10 @@ int clnt_salva( Cliente* pessoa ){
 }
 
 
-Lista* clnt_recupera( void ){
+Array* clnt_recupera_lista( void ){
     FILE* arquivo;
     Cliente* pessoa;
-    Lista* listaCliente;
+    Array* listaCliente;
 
     arquivo = fopen("cliente/Cliente.dat", "rb");
     if( arquivo == NULL ){
@@ -88,6 +98,61 @@ Lista* clnt_recupera( void ){
 
     fclose(arquivo);
     return listaCliente;
+}
+
+
+Tree* clnt_recupera_arvoreNome( void ){
+    FILE* arquivo;
+    Cliente* pessoa;
+    Tree* arvoreCliente;
+
+    arquivo = fopen("cliente/Cliente.dat", "rb");
+    if( arquivo == NULL ){
+        printf("Impossível abrir o arquivo de clientes.");
+        exit(1);
+    }
+
+    arvoreCliente = newTree();
+
+    pessoa = clnt_cria();
+    fread( pessoa, sizeof(Cliente), 1, arquivo );
+    while( !feof(arquivo) ){
+        if( pessoa->status == 0 ){
+            addClienteNome(arvoreCliente, pessoa);
+        }
+        pessoa = clnt_cria();
+        fread( pessoa, sizeof(Cliente), 1, arquivo );
+    }
+
+    fclose(arquivo);
+    return arvoreCliente;
+}
+
+
+Tree* clnt_recupera_arvoreCPF( void ){
+    FILE* arquivo;
+    Cliente* pessoa;
+    Tree* arvoreCliente;
+
+    arquivo = fopen("cliente/Cliente.dat", "rb");
+    if( arquivo == NULL ){
+        printf("Impossível abrir o arquivo de clientes.");
+        exit(1);
+    }
+
+    arvoreCliente = newTree();
+
+    pessoa = clnt_cria();
+    fread( pessoa, sizeof(Cliente), 1, arquivo );
+    while( !feof(arquivo) ){
+        if( pessoa->status == 0 )
+            addClienteCPF(arvoreCliente, pessoa);
+        pessoa = clnt_cria();
+        fread( pessoa, sizeof(Cliente), 1, arquivo );
+    }
+
+    fclose(arquivo);
+    return arvoreCliente;
 }
 
 
@@ -188,7 +253,7 @@ void clnt_copia( Cliente* destino, Cliente* origem ){
 
 Cliente* clnt_recupera_nome( void ){
     char* nome;
-    Lista* listaCliente;
+    Tree* listaCliente;
     Cliente* pessoa;
 
     nome = entr_str("Digite o nome do cliente: ");
@@ -197,24 +262,15 @@ Cliente* clnt_recupera_nome( void ){
         nome = entr_str("Digite o nome do cliente: ");
     }
 
-    listaCliente = clnt_recupera();
+    listaCliente = clnt_recupera_arvoreNome();
 
-    for( int i=0; i < size(listaCliente); i++ ){
-        pessoa = (Cliente*) pos(listaCliente, i);
-        if( cmp_nomes(nome, pessoa->nome) && !pessoa->status ){
-            clnt_copia(pessoa, pessoa);
-            liberaLista(listaCliente);
-            return pessoa;
-        }
-    }
-
-    return NULL;
+    return searchClienteNome(listaCliente, nome);
 }
 
 
 Cliente* clnt_recupera_cpf( void ){
     char* cpf;
-    Lista* listaCliente;
+    Tree* listaCliente;
     Cliente* pessoa;
 
     cpf = entr_str("Digite o cpf do cliente: ");
@@ -225,26 +281,17 @@ Cliente* clnt_recupera_cpf( void ){
 
     cpf = form_cpf( cpf );
 
-    listaCliente = clnt_recupera();
-
-    for( int i=0; i < size(listaCliente); i++ ){
-        pessoa = (Cliente*) pos(listaCliente, i);
-        if( !strcmp(pessoa->cpf, cpf) && !pessoa->status ){
-            clnt_copia(pessoa, (Cliente*) pos(listaCliente, i));
-            liberaLista(listaCliente);
-            return pessoa;
-        }
-    }
+    listaCliente = clnt_recupera_arvoreCPF();
     
-    return NULL;
+    return searchClienteCPF(listaCliente, cpf);
 }
 
 
 void clnt_mostra_todos( void ){
-    Lista* listaCliente;
+    Array* listaCliente;
     Cliente *busca;
 
-    listaCliente = clnt_recupera();
+    listaCliente = clnt_recupera_lista();
 
     for( int i = 0; i < size(listaCliente); i++ ){
         busca = (Cliente*) pos(listaCliente, i);
@@ -289,7 +336,7 @@ void clnt_re_dados( void ){
         voltar(0);
     } else {
         printf("Cliente não encontrado!\n");
-        sleep(2);
+        voltar(0);
     }
 }
 
@@ -350,7 +397,7 @@ void clnt_ins_endereco( Cliente* pessoa ){
     strcpy( pessoa->endereco, endereco );
 
     endereco = entr_str( "Nº: " );
-    while( !( val_ano( endereco ) ) ){
+    while( !( val_km( endereco ) ) ){
         printf("O número inserido é inválido.\n");
         endereco = entr_str( "Nº: " );
     }
