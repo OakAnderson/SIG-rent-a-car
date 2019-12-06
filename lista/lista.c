@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include "lista.h"
+#include "../aluguel/aluguel.h"
 #include "../usuario/usuario.h"
 #include "../mylib.h"
 #include "../validacoes/validacoes.h"
@@ -66,15 +67,15 @@ void addNodeClienteNome( Node* node, Node* new ){
     nodeC = (Cliente*) node->info;
     newC = (Cliente*) new->info;
 
-    side = strcmp(clnt_nome(nodeC), clnt_nome(newC));
+    side = str_cmp(clnt_nome(nodeC), clnt_nome(newC));
 
-    if( side < 0 ){
+    if( side > 0 ){
         if( node->left == NULL ){
             node->left = new;
         } else {
             addNodeClienteNome(node->left, new);
         }
-    } else if( side > 0 ){
+    } else if( side < 0 ){
         if( node->right == NULL ){
             node->right = new;
         } else {
@@ -202,6 +203,50 @@ Cliente* searchClienteCPF( Tree* tree, char* palavra ){
 }
 
 
+void mostraNodeCliente( Node* node ){
+    if( node->left != NULL ){
+        mostraNodeCliente( node->left );
+    }
+
+    printf("\nNº %d - - - - - - - - - - - - - - - -\n", clnt_num((Cliente*) node->info));
+    clnt_mostra( (Cliente*) node->info );
+    printf("\n- - - - - - - - - - - - - - - - - - -\n");
+
+    if( node->right != NULL ){
+        mostraNodeCliente( node->right );
+    }
+}
+
+
+void mostraCliente( Tree* tree ){
+    mostraNodeCliente(tree->root);
+}
+
+
+void freeSingleNodeCliente( Node* node ){
+    clnt_libera( (Cliente*) node->info );
+    free( node );
+}
+
+
+void freeNodesCliente( Node* node ){
+    if( node->left != NULL ){
+        freeNodesCliente( node->left );
+    }
+
+    if( node->right != NULL ){
+        freeNodesCliente( node->right );
+    }
+
+    freeSingleNodeCliente( node );
+}
+
+
+void freeTreeCliente( Tree* tree ){
+    freeNodesCliente(tree->root);
+}
+
+
 Elem* acessaInversa( Array* array, int indice ){
     Elem* inicio;
     int cont = array->size-1;
@@ -301,6 +346,24 @@ void append( Array* array, void* elemento ){
         array->fim = novo;
         array->size++;
     }
+}
+
+
+void appendInt( Array* array, int num ){
+    int *valor = (int*) malloc(sizeof(int));
+    *valor = num;
+    append( array, valor );
+}
+
+
+int intIn( Array* array, int num ){
+    for( Elem* i = array->ini; i != NULL; i = i->prox ){
+        if( *(int*) i->info == num ){
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 

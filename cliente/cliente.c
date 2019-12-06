@@ -6,6 +6,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
+#include "../aluguel/aluguel.h"
 #include "../usuario/usuario.h"
 #include "cliente.h"
 #include "../lista/lista.h"
@@ -37,6 +38,64 @@ char* clnt_nome( Cliente* pessoa ){
 
 char* clnt_cpf( Cliente* pessoa ){
     return pessoa->cpf;
+}
+
+
+int clnt_status( Cliente* pessoa ){
+    return pessoa->status;
+}
+
+
+int clnt_num( Cliente* pessoa ){
+    return pessoa->num;
+}
+
+
+int clnt_carrosAlugados( Cliente* pessoa ){
+    return pessoa->carrosAlugados;
+}
+
+
+int clnt_edita( Cliente* pessoa, int campo, void* alteracao ){
+    FILE* arquivo;
+    Cliente* busca;
+    short int achou = 0;
+
+    if( campo == CARROS_ALUGADOS ){
+        pessoa->carrosAlugados = *((int*) alteracao);
+    } else if ( campo == NOME ){
+        strcpy( pessoa->nome, (char*) alteracao );
+    } else if ( campo == ENDERECO ){
+        strcpy( pessoa->endereco, (char*) alteracao );
+    } else if ( campo == DATNASC ){
+        strcpy( pessoa->datNasc, (char*) alteracao );
+    } else if ( campo == STATUS ){
+        pessoa->status = *((int*) alteracao);
+    }
+
+    arquivo = fopen( "cliente/Cliente.dat", "r+b" );
+
+    if( arquivo == NULL ){
+        printf("Não foi possível salvar as informações\n");
+        exit(0);
+    }
+
+
+    busca = clnt_cria();
+    while( !achou && fread( busca, sizeof(Cliente), 1, arquivo ) ){
+        if( !strcmp(busca->cpf, pessoa->cpf) && busca->status != -1 ){
+            fseek( arquivo, sizeof(Cliente)*(-1), SEEK_CUR );
+            achou = 1;
+        }
+    }
+
+    if( achou ){
+        fwrite(pessoa, sizeof(Cliente), 1, arquivo);
+    }
+
+    fclose(arquivo);
+
+    return achou;
 }
 
 
@@ -91,8 +150,10 @@ Array* clnt_recupera_lista( void ){
     pessoa = clnt_cria();
     fread( pessoa, sizeof(Cliente), 1, arquivo );
     while( !feof(arquivo) ){
-        append(listaCliente, pessoa);
-        pessoa = clnt_cria();
+        if( pessoa->status == 0 ){
+            append(listaCliente, pessoa);
+            pessoa = clnt_cria();
+        }
         fread( pessoa, sizeof(Cliente), 1, arquivo );
     }
 
@@ -117,10 +178,10 @@ Tree* clnt_recupera_arvoreNome( void ){
     pessoa = clnt_cria();
     fread( pessoa, sizeof(Cliente), 1, arquivo );
     while( !feof(arquivo) ){
-        if( pessoa->status == 0 ){
+        if( pessoa->status != -1 ){
             addClienteNome(arvoreCliente, pessoa);
+            pessoa = clnt_cria();
         }
-        pessoa = clnt_cria();
         fread( pessoa, sizeof(Cliente), 1, arquivo );
     }
 
@@ -145,9 +206,10 @@ Tree* clnt_recupera_arvoreCPF( void ){
     pessoa = clnt_cria();
     fread( pessoa, sizeof(Cliente), 1, arquivo );
     while( !feof(arquivo) ){
-        if( pessoa->status == 0 )
+        if( pessoa->status != -1 ){
             addClienteCPF(arvoreCliente, pessoa);
-        pessoa = clnt_cria();
+            pessoa = clnt_cria();
+        }
         fread( pessoa, sizeof(Cliente), 1, arquivo );
     }
 
@@ -156,51 +218,175 @@ Tree* clnt_recupera_arvoreCPF( void ){
 }
 
 
+char* clnt_insereNC( int modo ){
+    char* entrada;
+
+    if( modo == INSERECPF ){
+        entrada = entr_str("Digite o CPF do cliente: ");
+        while( !val_cpf( entrada ) ){
+            free(entrada);
+            printf("CPF inválido.\n");
+            entrada = entr_str("Digite o CPF do cliente: ");
+        }
+
+        entrada = form_cpf(entrada);
+
+    } else if( modo == INSERENOME ) {
+        entrada = entr_str("Digite o nome do cliente: ");
+        while( !val_nome( entrada ) ){
+            free(entrada);
+            printf("Nome inválido.\n");
+            entrada = entr_str("Digite o nome do cliente: ");
+        }
+
+    } else if( modo == INSEREDOIS ){
+        entrada = entr_str("Digite o nome ou o CPF do cliente: ");
+        while( !val_nome( entrada ) && !val_cpf( entrada ) ){
+            free(entrada);
+            printf("Nome ou CPF inválido.\n");
+            entrada = entr_str("Digite o nome ou o CPF do cliente: ");
+        }
+
+        if( val_cpf(entrada) )
+            entrada = form_cpf(entrada);
+
+    } else if( modo == INSEREDATANASC ){
+        entrada = entr_str("Digite a data de nascimento: ");
+        while( !val_data( entrada ) || !val_idade( entrada ) ){
+            free(entrada);
+            printf("Data inválida\n");
+            entrada = entr_str("Digite a data de nascimento: ");
+        }
+
+        entrada = form_data( entrada );
+
+    } else if( modo == INSEREENDERECO ){
+        entrada = entr_str("Digite o endereço: ");
+        while( !val_endereco( entrada ) ){
+            free(entrada);
+            printf("Endereço inválido\n");
+            entrada = entr_str("Digite o endereço: ");
+        }
+    }
+
+    return entrada;
+}
+
+void clnt_edita_dados( void ){
+    Cliente* busca;
+    char* entrada;
+
+    printf("- - - - - EDITAR CLIENTE - - - - -\n");
+
+    while(busca == NULL){
+        entrada = clnt_insereNC( INSERECPF );
+        busca = clnt_recupera_cpf( entrada );
+        if( busca == NULL )
+            printf("Cliente não encontrado\n");
+
+        free(entrada);
+    }
+
+    printf("Nº %d - - - - - - - - - - - - - - - -\n", busca->status);
+    clnt_mostra( busca );
+    printf("- - - - - - - - - - - - - - - - - - -\n\n");
+
+    printf("1 - Editar Nome\n");
+    printf("2 - Editar Data de Nascimento\n");
+    printf("3 - Editar Endereço\n");
+    printf("0 - voltar\n");
+
+    switch ( menu_escolha(3) )
+    {
+    case 1:
+        entrada = clnt_insereNC( INSERENOME );
+        if( clnt_edita( busca, NOME, entrada ) )
+            printf("Cliente editado com sucesso!\n");
+        else {
+            printf("Ocorreu um erro.\n Cliente não editado.\n");
+        }
+        free(entrada);
+        break;
+
+    case 2:
+        entrada = clnt_insereNC( INSEREDATANASC );
+        if( clnt_edita( busca, DATNASC, entrada ) )
+            printf("Cliente editado com sucesso!\n");
+        else {
+            printf("Ocorreu um erro.\n Cliente não editado.\n");
+        }
+        free(entrada);
+        break;
+
+    case 3:
+        entrada = clnt_insereNC( INSEREENDERECO );
+        if( clnt_edita( busca, ENDERECO, entrada ) )
+            printf("Cliente editado com sucesso!\n");
+        else {
+            printf("Ocorreu um erro.\n Cliente não editado.\n");
+        }
+        free(entrada);
+        break;
+
+    default:
+        break;
+    }
+}
+
+
 void clnt_deleta( void ){
     FILE* arquivo;
     Cliente *pessoa, *pessoaR;
     char* resposta;
+    short int achou = 0;
 
-    pessoa = clnt_recupera_cpf();
+    pessoa = clnt_recupera_cpf( clnt_insereNC( INSERECPF ) );
     pessoaR = clnt_cria();
 
 
-    if( pessoa != NULL ){
+    if( pessoa != NULL && pessoa->status != DEVENDO ){
         arquivo = fopen("cliente/Cliente.dat", "r+b");
         if( arquivo == NULL ){
             printf("Erro ao deletar o cliente\n");
             exit(1);
         }
 
-        do {
-            fread( pessoaR, sizeof(Cliente), 1, arquivo );
-        } while(clnt_compara(pessoaR, pessoa) && !feof(arquivo) && !pessoa->status);
+        while( !achou && fread( pessoaR, sizeof(Cliente), 1, arquivo ) ){
+            if( !clnt_compara(pessoaR, pessoa) && pessoa->status != -1 ){
+                achou = 1;
+                fseek(arquivo, (-1)*sizeof(Cliente), SEEK_CUR);
+            }
+        }
 
-        printf("Nº %d - - - - - - - - - - - - - - - -\n", pessoa->num);
-        clnt_mostra(pessoa);
-        printf("- - - - - - - - - - - - - - - - - - -\n");
+        if( achou ){    
+            printf("Nº %d - - - - - - - - - - - - - - - -\n", pessoa->num);
+            clnt_mostra(pessoa);
+            printf("- - - - - - - - - - - - - - - - - - -\n");
 
-        resposta = entr_str("Deseja realmente apagar este cliente? ");
-        while( !val_SN(resposta) ){
-            printf("Digite apenas sim ou não");
             resposta = entr_str("Deseja realmente apagar este cliente? ");
-        }
-        if( get_resposta(resposta) ){
-            pessoa->status = -1;
-            fseek(arquivo, (-1)*sizeof(Cliente), SEEK_CUR);
-            fwrite(pessoa, sizeof(Cliente), 1, arquivo);
-            fclose(arquivo);
+            while( !val_SN(resposta) ){
+                free(resposta);
+                printf("Digite apenas sim ou não");
+                resposta = entr_str("Deseja realmente apagar este cliente? ");
+            }
+            if( get_resposta(resposta) ){
+                pessoa->status = -1;
+                fwrite(pessoa, sizeof(Cliente), 1, arquivo);
+                fclose(arquivo);
 
-            printf("Cliente deletado com sucesso!\n");
-            voltar(0);
+                printf("Cliente deletado com sucesso!\n");
+            } else {
+                printf("O cliente não foi deletado.\n");
+            }
         } else {
-            printf("O cliente não foi deletado.\n");
-            voltar(0);
+            printf("Ocorreu um erro ao salvar.\n");
         }
+    } else if( pessoa->status == DEVENDO ) {
+        printf("O cliente não pode ser deletado, pois o mesmo está em débito\n");
     } else {
         printf("Cliente não encontrado.\n");
-        voltar(0);
     }
+    voltar();
 }
 
 
@@ -245,54 +431,66 @@ void clnt_copia( Cliente* destino, Cliente* origem ){
     strcpy(destino->endereco, origem->endereco);
     strcpy(destino->complemento, origem->complemento);
     strcpy(destino->telefone, origem->telefone);
+    destino->carrosAlugados = origem->carrosAlugados;
     destino->num = origem->num;
     destino->status = origem->status;
     
 }
 
 
-Cliente* clnt_recupera_nome( void ){
-    char* nome;
+Cliente* clnt_recupera_nome( char* nome ){
     Tree* listaCliente;
-    Cliente* pessoa;
-
-    nome = entr_str("Digite o nome do cliente: ");
-    while( !val_nome( nome ) ){
-        printf("Nome inválido.\n");
-        nome = entr_str("Digite o nome do cliente: ");
-    }
+    Cliente* pessoa, *busca;
 
     listaCliente = clnt_recupera_arvoreNome();
 
-    return searchClienteNome(listaCliente, nome);
+    busca = searchClienteNome(listaCliente, nome);
+    if( busca != NULL ){
+        pessoa = clnt_cria();
+        clnt_copia( pessoa, busca );
+    } else {
+        pessoa = NULL;
+    }
+
+    freeTreeCliente(listaCliente);
+
+    return pessoa;
 }
 
 
-Cliente* clnt_recupera_cpf( void ){
-    char* cpf;
+Cliente* clnt_recupera_cpf( char* cpf ){
     Tree* listaCliente;
-    Cliente* pessoa;
+    Cliente* pessoa, *busca;
 
-    cpf = entr_str("Digite o cpf do cliente: ");
-    while( !val_cpf( cpf ) ){
-        printf("Nome inválido.\n");
-        cpf = entr_str("Digite o cpf do cliente: ");
-    }
 
     cpf = form_cpf( cpf );
 
     listaCliente = clnt_recupera_arvoreCPF();
     
-    return searchClienteCPF(listaCliente, cpf);
+    busca = searchClienteCPF(listaCliente, cpf);
+    if( busca != NULL ){
+        pessoa = clnt_cria();
+        clnt_copia(pessoa, busca);
+    } else {
+        pessoa = NULL;
+    }
+
+
+    freeTreeCliente(listaCliente);
+
+    return pessoa;
 }
 
 
 void clnt_mostra_todos( void ){
-    Array* listaCliente;
+    Tree* listaCliente;
+    // Array* listaCliente;
     Cliente *busca;
 
-    listaCliente = clnt_recupera_lista();
+    listaCliente = clnt_recupera_arvoreNome();
+    //listaCliente = clnt_recupera_lista();
 
+    /*
     for( int i = 0; i < size(listaCliente); i++ ){
         busca = (Cliente*) pos(listaCliente, i);
         if( !busca->status ){
@@ -301,42 +499,38 @@ void clnt_mostra_todos( void ){
             printf("\n- - - - - - - - - - - - - - - - - - -\n");
         }
     }
+    */
 
-    liberaLista( listaCliente );
+    mostraCliente( listaCliente );
+
+    freeTreeCliente(listaCliente);
+
+    // liberaLista( listaCliente );
 }
 
 
 void clnt_re_dados( void ){
-    char* nome;
+    char* entrada;
     Cliente* pessoa;
 
     imp_clnt_visualizarDados();
 
-    switch ( menu_escolha(2) )
-    {
-    case 1:
-        pessoa  = clnt_recupera_nome();
-        break;
-    
-    case 2:
-        pessoa = clnt_recupera_cpf();
-        break;
+    entrada = clnt_insereNC( INSEREDOIS );
 
-    case 0:
-        return;
 
-    default:
-        printf("Não foi possível abrir o menu\n");
-        break;
+    if( val_nome( entrada ) ){
+        pessoa  = clnt_recupera_nome( entrada );
+    } else if ( val_cpf( entrada ) ){
+        pessoa = clnt_recupera_cpf( entrada );
     }
 
     if( pessoa != NULL ){
         clnt_mostra( pessoa );
         clnt_libera( pessoa );
-        voltar(0);
+        voltar();
     } else {
         printf("Cliente não encontrado!\n");
-        voltar(0);
+        voltar();
     }
 }
 
@@ -468,6 +662,20 @@ void clnt_mostra_numero( Cliente* pessoa ){
 }
 
 
+void clnt_mostra_carrosAlugados( Cliente* pessoa ){
+    printf("\nNº de carros alugados: %d\n", pessoa->carrosAlugados);
+}
+
+
+void clnt_mostra_status( Cliente* pessoa ){
+    if( pessoa->status == LIVRE ){
+        printf("Status: Livre\n");
+    } else if( pessoa->status == DEVENDO ){
+        printf("Status: Devendo\n");
+    }
+}
+
+
 void clnt_libera( Cliente* pessoa ){
     free( pessoa );
 }
@@ -486,6 +694,8 @@ void clnt_mostra( Cliente* pessoa ){
     clnt_mostra_datNasc( pessoa );
     clnt_mostra_numero( pessoa );
     clnt_mostra_endereco( pessoa );
+    clnt_mostra_carrosAlugados( pessoa );
+    clnt_mostra_status( pessoa );
 }
 
 

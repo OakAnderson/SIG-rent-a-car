@@ -37,18 +37,24 @@ float eval(float num, int exp){
 }
 
 
+char* duplica(char* string){
+    char* resultado;
+
+    resultado = (char*) malloc (strlen( string )*sizeof( char )+1);
+
+    strcpy(resultado, string);
+
+    return resultado;
+}
+
+
 char* entr_str( char* frase ){
     char entrada[128];
-    char* resultado;
 
     printf("%s", frase);
     scanf(" %127[^\n]", entrada);
 
-    resultado = (char*) malloc (strlen( entrada )*sizeof( char )+1);
-
-    strcpy(resultado, entrada);
-
-    return resultado;
+    return duplica(entrada);
 }
 
 
@@ -154,7 +160,6 @@ float form_preco( char* entrada ){
         v = strlen(entrada);
     }
     for( int i = 0; entrada[i] != '\0'; i++ ){
-        printf("GOTCHA\n");
         if( v > 0 && entrada[i] != '.' && entrada[i] != ',' ){
             preco += (entrada[i] - '0') * eval(10.0, --v);
         }
@@ -221,6 +226,8 @@ char* form_data( char* entrada ){
         }
     }
 
+    resultado[10] = '\0';
+
     return resultado;
 }
 
@@ -235,7 +242,7 @@ int get_resposta( char* opcao ){
 }
 
 
-void voltar( int linhas ){
+void voltar( void ){
     char* opcao;
     int cont = 0, erro = 0;
 

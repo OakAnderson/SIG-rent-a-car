@@ -5,6 +5,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
+#include "../aluguel/aluguel.h"
 #include "../usuario/usuario.h"
 #include "../cliente/cliente.h"
 #include "../mylib.h"
@@ -19,9 +20,11 @@
 #define REGEX_DATA "^(3[0-1]|[12][0-9]|0[1-9])/?(0[1-9]|1[0-2])/?([0-9]{2})?([0-9]{2})$"
 // Expressão REGEX_DATA baseada no livro "Expressões regulares cookbook" de Jan Goyvaerts
 
+#define REGEX_DIAS "^([1-8][0-9]|(90)|[1-9])$"
+
 #define REGEX_KM "^[0-9]{1,5}$"
 
-#define REGEX_ENDERECO "^[a-z0-9à-ú\\. ]*$"
+#define REGEX_ENDERECO "^[a-z0-9à-ú\\.º°ª ]*$"
 
 #define REGEX_BAIRRO "^[a-zà-ú\' ]{3,20}+$"
 
@@ -33,7 +36,7 @@
 
 #define REGEX_SN "^(s(im)?|n(ao)?)$"
 
-#define REGEX_PLACA "^[a-z]{3}\\-?[0-9]{4}$"
+#define REGEX_PLACA "^[a-z]{3}\\-[0-9]{4}$"
 
 #define REGEX_MARCA "^[a-z \\-]+$"
 
@@ -322,17 +325,51 @@ int val_preco( char* preco ){
 }
 
 
-int cmp_nomes(char* nome1, char* nome2){
-
-    for( int i = 0; nome1[i] != '\0'; i++ ){
-        if( tolower(nome1[i]) > tolower(nome2[i]) ){
+int str_cmp( char* string1, char* string2 ){
+    int i;
+    for( i = 0; string1[i] != '\0'; i++ ){
+        if( string2[i] == '\0' ){
+            return 1;
+        } else if( tolower(string1[i]) < tolower(string2[i]) ){
             return -1;
-        } else if(tolower(nome1[i]) < tolower(nome2[i])){
+        } else if( tolower(string1[i]) > tolower(string2[i]) ){
             return 1;
         }
     }
 
-    return 0;
+    if( string2[i] == '\0' ){
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+
+int cmp_nomes(char* nome1, char* nome2){
+    int i = 0, comp, espaco = 1;
+    char aux[52];
+
+    for( i = 0; nome1[i] != '\0' ; i++ ){
+        if( nome1[i] == ' ' ){
+            espaco += 1;
+        }
+    }
+
+    for( i = 0; nome2[i] != '\0' && espaco > 0 ; i++ ){
+        if( nome2[i] == ' ' ){
+            espaco--;
+        }
+        aux[i] = nome2[i];
+    }
+    if( aux[i-1] == ' ' && aux[i-1] != '\0')
+        aux[i-1] = '\0';
+    else if( aux[i] == ' ' || aux[i-1] != '\0')
+        aux[i] = '\0';
+    
+
+    comp = str_cmp(nome1, aux);
+
+    return comp;
 }
 
 
@@ -348,4 +385,9 @@ int val_inteiro( char* entrada ){
     }
 
     return 1;
+}
+
+
+int val_dias( char* entrada ){
+    return val_regex(REGEX_DIAS, entrada);
 }

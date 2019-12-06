@@ -40,6 +40,12 @@ int size( Array* );
 void liberaLista( Array* );
 
 
+void appendInt( Array*, int );
+
+
+int intIn( Array*, int );
+
+
 Tree* newTree( void );
 
 
@@ -53,5 +59,11 @@ Cliente* searchClienteNome( Tree*, char* );
 
 
 Cliente* searchClienteCPF( Tree*, char* );
+
+
+void mostraCliente( Tree* );
+
+
+void freeTreeCliente( Tree* );
 
 #endif

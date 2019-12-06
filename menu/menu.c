@@ -5,12 +5,46 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
+#include "../veiculo/veiculo.h"
+#include "../aluguel/aluguel.h"
 #include "../usuario/usuario.h"
 #include "../cliente/cliente.h"
 #include "../mylib.h"
 #include "../validacoes/validacoes.h"
 #include "menu.h"
-#include "../veiculo/veiculo.h"
+
+
+void menuCliente( void ){
+    int escolha;
+
+    do{
+        imp_menu_cliente();
+        escolha = menu_escolha(5);
+        get_menu_cliente( escolha );
+    }while( escolha != 0 );
+}
+
+
+void menuVeiculo( void ){
+    int escolha;
+
+    do{
+        imp_menu_veiculo();
+        escolha = menu_escolha(4);
+        get_menu_veiculo( escolha );
+    }while( escolha != 0 );
+}
+
+
+void menuAluguel( void ){
+    int escolha;
+
+    do{
+        imp_menu_aluguel();
+        escolha = menu_escolha(2);
+        get_menu_aluguel( escolha );
+    }while( escolha != 0 );
+}
 
 
 void get_menu_p( int n ){
@@ -18,24 +52,20 @@ void get_menu_p( int n ){
     switch (n)
     {
     case 1:
-        imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 4 ) );
+        menuCliente();
         break;
     
     case 2:
-        imp_menu_veiculo();
-        get_menu_veiculo( menu_escolha( 4 ) );
+        menuVeiculo();
         break;
 
     case 3:
-        system("clear");
-        imp_menu_aluguel();
-        get_menu_aluguel( menu_escolha( 2 ) );
+        menuAluguel();
         break;
 
     case 4:
         imp_sobre();
-        voltar(0);
+        voltar();
         imp_menu_p();
         get_menu_p( menu_escolha( 4 ) );
         break;
@@ -71,31 +101,33 @@ void get_menu_cliente( int n ){
         system("clear");
         printf("\n\n_ _ _ _ _ CADASTRO DE CLIENTE _ _ _ _ _\n\n");
         clnt_cad();
-        voltar(0);
-        imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 4 ) );
+        voltar();
         break;
 
     case 2:
         system("clear");
         clnt_re_dados();
-        imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 4 ) );
+        break;
+
     case 3:
         system("clear");
         clnt_mostra_todos();
-        voltar(0);
-        imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 4 ) );
-    
+        voltar();
+        break;
+
     case 4:
         system("clear");
+        clnt_edita_dados();
+        voltar();
+        break;
+
+    case 5:
+        system("clear");
         clnt_deleta();
-        imp_menu_cliente();
-        get_menu_cliente( menu_escolha( 4 ) );
+        break;
+
     case 0:
-        imp_menu_p();
-        get_menu_p( menu_escolha( 4 ) );
+        break;
 
     default:
         printf("Não foi possível abrir o menu\n");
@@ -110,7 +142,8 @@ void imp_menu_cliente( void ){
     printf("1 - Cadastrar cliente\n");
     printf("2 - Visualizar dados do cliente\n");
     printf("3 - Visualizar todos os clientes\n");
-    printf("4 - Deletar cliente\n");
+    printf("4 - Editar Cliente\n");
+    printf("5 - Deletar cliente\n");
     printf("0 - sair\n");
 }
 
@@ -122,30 +155,26 @@ void get_menu_veiculo( int n ){
         system("clear");
         printf("\n\n_ _ _ _ _ CADASTRO DE VEÍCULO _ _ _ _ _\n\n");
         veic_cad();
-        voltar(0);
-        imp_menu_veiculo();
-        get_menu_veiculo( menu_escolha( 4 ) );
+        voltar();
+        break;
 
     case 2:
         system("clear");
         veic_re_dados();
-        imp_menu_veiculo();
-        get_menu_veiculo( menu_escolha( 4 ) );
         break;
     case 3:
         system("clear");
         veic_mostra_todos();
-        voltar(0);
-        imp_menu_veiculo();
-        get_menu_veiculo( menu_escolha( 4 ) );
+        voltar();
+        break;
+
     case 4:
         system("clear");
+        printf("- - - - - DELETAR CLIENTE - - - - -\n\n");
         veic_deleta();
-        imp_menu_veiculo();
-        get_menu_veiculo( menu_escolha( 4 ) );
+        break;
+
     case 0:
-        imp_menu_p();
-        get_menu_p( menu_escolha( 4 ) );
         break;
     
     default:
@@ -167,6 +196,7 @@ void imp_menu_veiculo( void ){
 
 
 void imp_menu_aluguel( void ){
+    system("clear");
     printf("\n- - - - - MENU ALUGUEL - - - - -\n");
     printf("1 - Alugar um veículo\n");
     printf("2 - Devolver um veículo\n");
@@ -179,23 +209,19 @@ void get_menu_aluguel( int n ){
     {
     case 1:
         system("clear");
-        printf("EM CONSTRUÇÃO.\n");
-        sleep( 2 );
-        imp_menu_aluguel();
-        get_menu_aluguel( menu_escolha( 2 ) );
+        printf("- - - - - ALUGUEL DE VEÍCULOS - - - - -\n\n");
+        alugarVeiculo();
+        voltar();
         break;
     
     case 2:
         system("clear");
-        printf("EM CONSTRUÇÃO.\n");
-        sleep( 2 );
-        imp_menu_aluguel();
-        get_menu_aluguel( menu_escolha( 2 ) );
+        printf("- - - - - DEVOLUÇÃO DE VEÍCULOS - - - - -\n\n");        
+        devolverVeiculo();
+        voltar();
         break;
     
     case 0:
-        imp_menu_p();
-        get_menu_p( menu_escolha( 4 ) );
         break;
     
     default:
@@ -211,13 +237,15 @@ void imp_sobre( void ){
 
 void imp_clnt_visualizarDados( void ){
     printf("_ _ _ _ _ VISUALIZAR DADOS DE CLIENTE _ _ _ _ _\n\n");
-    printf("1 - Pesquisar por nome\n");
-    printf("2 - Pesquisar por CPF\n");
-    printf("0 - sair\n");
 }
 
 
 void inicia_programa( void ){
-    imp_menu_p();
-    get_menu_p( menu_escolha( 4 ) );
+    int escolha;
+
+    do{
+        imp_menu_p();
+        escolha = menu_escolha( 4 );
+        get_menu_p( escolha );
+    } while( escolha != 0 );
 }

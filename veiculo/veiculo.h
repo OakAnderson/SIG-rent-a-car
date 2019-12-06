@@ -2,6 +2,12 @@
 #ifndef VEICULO_H
 #define VEICULO_H
 
+
+#define KMRODADO 1
+#define TOTALDEALUGUEIS 2
+#define VEIC_STATUS 3
+
+
 typedef struct veiculo Veiculo;
 
 
@@ -99,9 +105,16 @@ void veic_cad( void );
 
 /* Função recupera por placa
 ** Opração que recebe como entrada a placa de um carro e
-** o mostra se estiver cadastrado
+** o retorna se estiver cadastrado
 */
 Veiculo* veic_recupera_placa( void );
+
+
+/* Função recupera por codigo
+** Opração que recebe como entrada o código de um carro e
+** o retorna se estiver cadastrado
+*/
+Veiculo* veic_recupera_codigo( int );
 
 
 /* Função visualizar dados
@@ -116,4 +129,29 @@ void veic_re_dados( void );
 ** deletar e o deleta
 */
 void veic_deleta( void );
+
+
+/* Função preco
+** Retorna o preço da diária do veículo em float
+*/
+float veic_preco( Veiculo* );
+
+
+/* Função codigo
+** Retorna o código do veículo
+*/
+int veic_codigo( Veiculo* );
+
+
+/* Função status
+** Retorna o status do veículo
+*/
+int veic_status( Veiculo* );
+
+
+/* Função Cliente Edita
+** Operação que edita um campo específico do carro
+*/
+int veic_edita( Veiculo* veiculo, int campo, void* alteracao );
+
 #endif

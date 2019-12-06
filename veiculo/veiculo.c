@@ -6,6 +6,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
+#include "../aluguel/aluguel.h"
 #include "../cliente/cliente.h"
 #include "../lista/lista.h"
 #include "../usuario/usuario.h"
@@ -15,28 +16,84 @@
 
 
 typedef struct veiculo {
+    float preco;
+    float kmRod;
     int totalDeAlugueis;
     int status;
     int codigo;
-    float preco[5];
     char marca[15];
     char modelo[51];
     char ano[5];
     char placa[9];
     char cor[20];
-    char kmRod[6];
 } Veiculo;
 
 
 int veic_compara( Veiculo* veiculo1, Veiculo* veiculo2 ){
     if( !strcmp(veiculo1->placa, veiculo2->placa) ){
         if( !strcmp(veiculo1->marca, veiculo2->marca) ){
-            if( !strcmp(veiculo1->modelo, veiculo1->modelo) ){
+            if( !strcmp(veiculo1->modelo, veiculo2->modelo) ){
                 return 0;
             }
         }
     }
+
     return 1;
+}
+
+
+int veic_codigo( Veiculo* automovel ){
+    return automovel->codigo;
+}
+
+
+float veic_preco( Veiculo* automovel ){
+    return (float) automovel->preco;
+}
+
+
+int veic_status( Veiculo* automovel ){
+    return automovel->status;
+}
+
+
+int veic_edita( Veiculo* veiculo, int campo, void* alteracao ){
+    FILE* arquivo;
+    Veiculo* busca;
+    short int achou = 0;
+
+    if( campo == VEIC_STATUS ){
+        veiculo->status = *((int*) alteracao);
+    } else if( campo == TOTALDEALUGUEIS ){
+        veiculo->totalDeAlugueis = *((int*) alteracao);
+    }
+
+    arquivo = fopen( "veiculo/Veiculo.dat", "r+b" );
+
+    if( arquivo == NULL ){
+        printf("Não foi possível salvar as informações\n");
+        exit(0);
+    }
+    
+
+    busca = veic_cria();
+    while( !achou && fread( busca, sizeof(Veiculo), 1, arquivo ) ){
+        if( !strcmp(busca->placa, veiculo->placa) ){
+            achou = 1;
+            fseek( arquivo, sizeof(Veiculo)*(-1), SEEK_CUR );
+        }
+    }
+
+    if( achou ){
+        fwrite(veiculo, sizeof(Veiculo), 1, arquivo);
+    } else {
+        printf("Ocorreu um erro ao salvar as alterações\n");
+        exit(1);
+    }
+
+    fclose(arquivo);
+
+    return !achou;
 }
 
 
@@ -46,19 +103,29 @@ Array* veic_recupera( void ){
     Array* listaVeiculo;
 
     arquivo = fopen("veiculo/Veiculo.dat", "rb");
-    if( arquivo == NULL ){
-        printf("Impossível abrir o arquivo de veículos.");
-        exit(1);
+    if(arquivo == NULL){
+        arquivo = fopen("veiculo/Veiculo.dat", "wb");
+        if( arquivo == NULL ){
+            printf("Impossível abrir o arquivo de veículos.\n");
+            exit(1);
+        }
     }
 
     listaVeiculo = arrayCria();
 
-    veiculo = veic_cria();
-    fread( veiculo, sizeof(Veiculo), 1, arquivo );
-    while( !feof(arquivo) ){
-        append(listaVeiculo, veiculo);
+    fseek(arquivo, 0, SEEK_END);
+    if( ftell(arquivo) < sizeof(Veiculo) ){
+        printf("Não há veículos cadastrados.\n");
+    }else {
+        fseek(arquivo, 0, SEEK_SET);
+
         veiculo = veic_cria();
         fread( veiculo, sizeof(Veiculo), 1, arquivo );
+        while( !feof(arquivo) ){
+            append(listaVeiculo, veiculo);
+            veiculo = veic_cria();
+            fread( veiculo, sizeof(Veiculo), 1, arquivo );
+        }
     }
 
     fclose(arquivo);
@@ -66,27 +133,32 @@ Array* veic_recupera( void ){
 }
 
 
-void veic_copia( Veiculo* veiculo1, Veiculo* veiculo2 ){
+Veiculo* veic_copia( Veiculo* veiculo1){
+    Veiculo* veiculo2 = veic_cria();
+
+    veiculo2->preco = veiculo1->preco;
     veiculo2->totalDeAlugueis = veiculo1->totalDeAlugueis;
     veiculo2->status = veiculo1->status;
     veiculo2->codigo = veiculo1->codigo;
+    veiculo2->kmRod = veiculo1->kmRod;
     strcpy(veiculo2->marca, veiculo1->marca);
     strcpy(veiculo2->modelo, veiculo1->modelo);
     strcpy(veiculo2->ano, veiculo1->ano);
     strcpy(veiculo2->placa, veiculo1->placa);
     strcpy(veiculo2->cor, veiculo1->cor);
-    strcpy(veiculo2->kmRod, veiculo1->kmRod);
+
+    return veiculo2;
 }
 
 
 Veiculo* veic_recupera_placa( void ){
     char* placa;
     Array* listaVeiculo;
-    Veiculo* veiculo;
+    Veiculo* veiculo, *retorno;
 
     placa = entr_str("Digite a placa do veículo: ");
     while( !val_placa( placa ) ){
-        printf("Nome inválido.\n");
+        printf("Placa inválida.\n");
         placa = entr_str("Digite a placa do veículo: ");
     }
 
@@ -94,13 +166,34 @@ Veiculo* veic_recupera_placa( void ){
 
     for( int i=0; i < size(listaVeiculo); i++ ){
         veiculo = (Veiculo*) pos(listaVeiculo, i);
-        if( !strcmp(veiculo->placa, placa) && !veiculo->status ){
-            veic_copia(veiculo, veiculo);
+        if( !str_cmp(veiculo->placa, placa) ){
+            retorno = veic_copia(veiculo);
             liberaLista(listaVeiculo);
-            return veiculo;
+            return retorno;
         }
     }
     
+    liberaLista(listaVeiculo);
+    return NULL;
+}
+
+
+Veiculo* veic_recupera_codigo( int codigo ){
+    Array* listaVeiculo;
+    Veiculo* veiculo, *retorno;
+
+    listaVeiculo = veic_recupera();
+
+    for( int i=0; i < size(listaVeiculo); i++ ){
+        veiculo = (Veiculo*) pos(listaVeiculo, i);
+        if( veiculo->codigo == codigo ){
+            retorno = veic_copia(veiculo);
+            liberaLista(listaVeiculo);
+            return retorno;
+        }
+    }
+    
+    liberaLista(listaVeiculo);
     return NULL;
 }
 
@@ -135,7 +228,7 @@ void veic_re_dados( void ){
     if( veiculo != NULL ){
         veic_mostra( veiculo );
         veic_libera( veiculo );
-        voltar(0);
+        voltar();
     } else {
         printf("Veiculo não encontrado!\n");
         sleep(2);
@@ -182,6 +275,7 @@ void veic_deleta( void ){
     FILE* arquivo;
     Veiculo *veiculo, *veiculoR;
     char* resposta;
+    short int achou = 0;
 
     veiculo = veic_recupera_placa();
     veiculoR = veic_cria();
@@ -194,34 +288,43 @@ void veic_deleta( void ){
             exit(1);
         }
 
-        do {
-            fread( veiculoR, sizeof(Veiculo), 1, arquivo );
-        } while(veic_compara(veiculoR, veiculo) && !feof(arquivo) && veiculo->status != -1);
-
-        printf("Nº %d - - - - - - - - - - - - - - - -\n", veiculo->codigo);
-        veic_mostra(veiculo);
-        printf("- - - - - - - - - - - - - - - - - - -\n");
-
-        resposta = entr_str("Deseja realmente apagar este veículo? ");
-        while( !val_SN(resposta) ){
-            printf("Digite apenas sim ou não");
-            resposta = entr_str("Deseja realmente apagar este veículo? ");
+        while( !achou && fread( veiculoR, sizeof(Veiculo), 1, arquivo ) ){
+            if( !veic_compara(veiculoR, veiculo) && veiculo->status != -1 ){
+                achou = 1;
+                fseek(arquivo, (-1)*sizeof(Veiculo), SEEK_CUR);
+            }
         }
-        if( get_resposta(resposta) ){
-            veiculo->status = -1;
-            fseek(arquivo, (-1)*sizeof(Veiculo), SEEK_CUR);
-            fwrite(veiculo, sizeof(Veiculo), 1, arquivo);
-            fclose(arquivo);
 
-            printf("Veiculo deletado com sucesso!\n");
-            voltar(0);
+        if( achou ){
+            printf("Nº %d - - - - - - - - - - - - - - - -\n", veiculo->codigo);
+            veic_mostra(veiculo);
+            printf("- - - - - - - - - - - - - - - - - - -\n");
+
+            resposta = entr_str("Deseja realmente apagar este veículo? ");
+            while( !val_SN(resposta) ){
+                free(resposta);
+                printf("Digite apenas sim ou não");
+                resposta = entr_str("Deseja realmente apagar este veículo? ");
+            }
+
+            if( get_resposta(resposta) ){
+                veiculo->status = -1;
+                fwrite(veiculo, sizeof(Veiculo), 1, arquivo);
+                fclose(arquivo);
+
+                printf("Veiculo deletado com sucesso!\n");
+                voltar();
+            } else {
+                printf("O veículo não foi deletado.\n");
+                voltar();
+            }
         } else {
-            printf("O veículo não foi deletado.\n");
-            voltar(0);
+            printf("Ocorreu um erro ao salvar.\n");
+            voltar();
         }
     } else {
         printf("Veiculo não encontrado.\n");
-        voltar(0);
+        voltar();
     }
 }
 
@@ -234,11 +337,9 @@ void veic_mostra_todos( void ){
 
     for( int i = 0; i < size(listaVeiculo); i++ ){
         busca = (Veiculo*) pos(listaVeiculo, i);
-        if( !busca->status ){
             printf("\nNº %d - - - - - - - - - - - - - - - -\n", busca->codigo);
             veic_mostra( busca );
             printf("\n- - - - - - - - - - - - - - - - - - -\n");
-        }
     }
 
     liberaLista( listaVeiculo );
@@ -257,7 +358,7 @@ void veic_ins_preco( Veiculo* automovel ){
 
     preco = form_preco( resultado );
 
-    *automovel->preco = preco;
+    automovel->preco = preco;
     free(resultado);
 }
 
@@ -323,7 +424,8 @@ void veic_ins_km( Veiculo* automovel ){
         resultado = entr_str("Insira a quilometragem do veículo: ");
     }
 
-    strcpy( automovel->kmRod, resultado );
+    automovel->kmRod = form_preco(resultado);
+
     free(resultado);
 }
 
@@ -343,7 +445,7 @@ void veic_ins_cor( Veiculo* automovel ){
 
 
 void veic_mostra_preco( Veiculo* automovel ){
-    printf("\nPreço(p/ dia): R$%.2f\n", *automovel->preco);
+    printf("\nPreço(p/ dia): R$%.2f\n", automovel->preco);
 }
 
 
@@ -368,7 +470,7 @@ void veic_mostra_placa( Veiculo* automovel ){
 
 
 void veic_mostra_km( Veiculo* automovel ){
-    printf("\n%skm rodados\n", automovel->kmRod);
+    printf("\n%.2fkm rodados\n", automovel->kmRod);
 }
 
 void veic_mostra_cor( Veiculo* automovel ){

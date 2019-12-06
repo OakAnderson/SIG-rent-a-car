@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include "usuario.h"
+#include "../aluguel/aluguel.h"
 #include "../cliente/cliente.h"
 #include "../mylib.h"
 #include "../validacoes/validacoes.h"

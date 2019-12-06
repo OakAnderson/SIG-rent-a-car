@@ -141,4 +141,17 @@ int val_preco( char* preco );
 ** Verifica se os nomes inseridos são equivalentes
 */
 int cmp_nomes( char*, char* );
+
+
+/* Função valida dias
+** Operação que retorna verdadeiro se o cliente
+** Inseriu uma quantidade de dias para aluguel válida
+*/
+int val_dias( char* );
+
+
+/* Função compara strings
+** Operação que funciona similar a função strcmp, mas ignora uppercase
+*/
+int str_cmp( char* str1, char* str2 );
 #endif

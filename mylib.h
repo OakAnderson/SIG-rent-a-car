@@ -69,11 +69,14 @@ int dia_atual( void );
 /* Função voltar
 ** Operação que solicita ao cliente se ele deseja voltar
 */
-void voltar( int );
+void voltar( void );
 
 
 /* Função obtem resposta
 ** Operação que retorna 1 se a resposta do usuário for sim
 */
 int get_resposta( char* );
+
+
+void flush_in(void);
 #endif
